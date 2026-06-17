@@ -375,6 +375,14 @@ body{transition:background-color .55s ease}
 .c-name{font-size:.88rem;font-weight:700}
 .c-role{font-size:.7rem;color:var(--rose);font-weight:600;margin-top:1px}
 .c-note{font-size:.66rem;color:var(--ink-faint);margin-top:1px}
+.c-call{
+  flex-shrink:0;width:38px;height:38px;border-radius:50%;
+  background:var(--sage-pale);border:1.5px solid var(--sage-light);
+  color:var(--sage);display:flex;align-items:center;justify-content:center;
+  text-decoration:none;transition:background .18s,transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.c-call:active{background:var(--sage-light);transform:scale(.92)}
 
 /* ── CORSAGES ── */
 .cor-intro{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:var(--r);
@@ -531,14 +539,14 @@ let activePhaseIdx = 0;
 let sheetItemId = null;
 
 const CONTACTS = [
-  {av:'KJ',name:'Kelly & Jordi',role:'Fotografen',note:'Aanwezig vanaf 08:00 hotel · gehele dag'},
+  {av:'KJ',name:'Kelly & Jordi',role:'Fotografen',note:'Aanwezig vanaf 08:00 hotel · gehele dag',tel:'+31628620796'},
   {av:'ML',name:'Mirjam & Lianne',role:'Make-up artists',note:'Aanwezig 07:30–12:15 hotel'},
-  {av:'SU',name:'Sulaika',role:'BABS',note:'Aanwezig 14:30–ca. 16:30'},
-  {av:'DL',name:'Daniëlle',role:'Ceremoniemeester',note:'Aanwezig vanaf 13:00'},
-  {av:'MA',name:'Marcus',role:'Vader bruid · trouwauto',note:'Aflevering vóór 12:00 — tijdstip NTB'},
-  {av:'🌸',name:'Het Bloemenhart',role:'Bloemist',note:'Aflevering boeket + corsages · tijdstip NTB'},
-  {av:'TS',name:'Thomas & Sjoerd',role:'DJ & Saxofonist',note:'Aankomst ca. 19:30'},
-  {av:'🎺',name:'Brassband',role:'Verrassing voor gasten!',note:'Aankomst 19:30 via melkhuisje · opkomst 20:15'},
+  {av:'SU',name:'Sulaika',role:'BABS',note:'Aanwezig 14:30–ca. 16:30',tel:'+31620777758'},
+  {av:'DL',name:'Daniëlle',role:'Ceremoniemeester',note:'Aanwezig vanaf 13:00',tel:'+31616531619'},
+  {av:'MA',name:'Marcus',role:'Vader bruid · trouwauto',note:'Aflevering vóór 12:00 — tijdstip NTB',tel:'+31610082926'},
+  {av:'🌸',name:'Het Bloemenhart',role:'Bloemist',note:'Aflevering boeket + corsages · tijdstip NTB',tel:'+31107371611'},
+  {av:'TS',name:'Thomas & Sjoerd',role:'DJ & Saxofonist',note:'Aankomst ca. 19:30',tel:'+31646001296'},
+  {av:'🎺',name:'Passion Music Brass',role:'Brassband · Verrassing voor gasten!',note:'Aankomst 19:30 via melkhuisje · opkomst 20:15',tel:'+31616538147'},
   {av:'🏗️',name:'Feestopbouwbedrijf',role:'Opbouw feestzaal',note:'Naam + tijdstip NTB'},
 ];
 
@@ -821,9 +829,19 @@ async function saveSheetNote(){
 /* ── RENDERS ── */
 function renderContacts(){
   document.getElementById('contactList').innerHTML=CONTACTS.map(c=>
-    `<div class="c-card"><div class="c-av">${c.av}</div><div>
-      <div class="c-name">${c.name}</div><div class="c-role">${c.role}</div>
-      <div class="c-note">${c.note}</div></div></div>`).join('');
+    `<div class="c-card">
+      <div class="c-av">${c.av}</div>
+      <div style="flex:1;min-width:0">
+        <div class="c-name">${c.name}</div>
+        <div class="c-role">${c.role}</div>
+        <div class="c-note">${c.note}</div>
+      </div>
+      ${c.tel?`<a href="tel:${c.tel}" class="c-call" title="Bellen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.08 6.08l1.68-1.68a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </a>`:''}`
+  ).join('</div>');
 }
 function renderCorsages(){
   document.getElementById('corsageList').innerHTML=D.corsages.map(c=>{

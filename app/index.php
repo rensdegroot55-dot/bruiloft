@@ -173,6 +173,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 .static-view{display:none;padding:16px 16px 110px}
 
 /* ═════════════════════════════════
+   FASE-KLEUREN (theming per fase)
+   ═════════════════════════════════ */
+:root{
+  --phase-accent:var(--gold);
+  --phase-dark:#3a2414;
+  --phase-bg:var(--bg);
+  --phase-line:var(--gold);
+}
+body{transition:background-color .55s ease}
+
+/* ═════════════════════════════════
    TIMELINE
    ═════════════════════════════════ */
 .tl-phase-label{
@@ -184,15 +195,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 
 .timeline{position:relative;padding-left:44px}
 
-/* vertical golden line */
+/* vertical line — zelf-tekenend via scaleY */
 .timeline::before{
   content:'';position:absolute;
   left:14px;top:6px;bottom:0;width:2px;
   background:linear-gradient(to bottom,
-    var(--gold) 0%,
+    var(--phase-line) 0%,
     rgba(201,169,110,.5) 60%,
-    rgba(201,169,110,.08) 100%);
+    rgba(201,169,110,.06) 100%);
   border-radius:2px;
+  transform-origin:top;
+  transform:scaleY(0);
+  transition:transform .65s cubic-bezier(.4,0,.2,1), background .55s ease;
+}
+.timeline.drawn::before{transform:scaleY(1)}
+
+/* ── STAGGER ENTRANCE ── */
+@keyframes cardIn{
+  from{opacity:0;transform:translateX(22px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes cardInDone{
+  from{opacity:0;transform:translateX(-18px)}
+  to{opacity:.58;transform:translateX(-5px)}
 }
 
 /* ── TIMELINE ITEM ── */
@@ -200,13 +225,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
   position:relative;margin-bottom:10px;
   transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;
 }
+.tl-item.entering{animation:cardIn .32s cubic-bezier(.2,0,.2,1) both}
+.tl-item.entering.is-done{animation:cardInDone .32s cubic-bezier(.2,0,.2,1) both}
+
+/* ── SPOTLIGHT: eerste actieve item ── */
+.tl-item.spotlight .tl-card{
+  box-shadow:0 0 0 2px var(--phase-accent),
+             0 6px 28px rgba(201,169,110,.28);
+  animation:glow-pulse 2.2s ease-in-out infinite;
+}
+.tl-item.spotlight .tl-dot{
+  box-shadow:0 0 0 5px rgba(201,169,110,.18),
+             0 0 14px rgba(201,169,110,.25);
+  animation:pulse-dot 2.2s ease-in-out infinite;
+}
+@keyframes glow-pulse{
+  0%,100%{box-shadow:0 0 0 2px var(--phase-accent),0 4px 18px rgba(201,169,110,.2)}
+  50%{box-shadow:0 0 0 3px var(--phase-accent),0 8px 34px rgba(201,169,110,.38)}
+}
 
 /* dot on the line */
 .tl-dot{
   position:absolute;left:-37px;top:16px;
   width:16px;height:16px;border-radius:50%;
-  border:2.5px solid var(--gold);background:var(--surface);
-  z-index:1;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  border:2.5px solid var(--phase-accent);background:var(--surface);
+  z-index:1;transition:all .3s cubic-bezier(.34,1.56,.64,1), border-color .55s ease;
   box-shadow:0 0 0 3px rgba(201,169,110,.12);
 }
 .tl-item.is-done .tl-dot{
@@ -259,8 +302,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 /* left accent stripe */
 .tl-card::before{
   content:'';display:block;height:3px;
-  background:linear-gradient(90deg,var(--gold),rgba(201,169,110,.3));
-  transition:background .3s;
+  background:linear-gradient(90deg,var(--phase-accent),rgba(201,169,110,.15));
+  transition:background .3s, background-color .55s;
 }
 .tl-item.is-done .tl-card::before{background:linear-gradient(90deg,var(--sage),rgba(122,158,126,.2))}
 .tl-item.is-late .tl-card::before{background:linear-gradient(90deg,var(--rose),rgba(200,115,122,.2))}
@@ -516,6 +559,26 @@ function cd(ms){
   return{val,late:min<0,soon:min>=0&&min<=30,unit:min>=0?'nog':'te laat'};
 }
 
+/* ── FASE-THEMA ── */
+const PHASE_THEMES = {
+  vrijdag:   {accent:'#a78bdb', dark:'#2a1a50', bg:'#f0ecf8', line:'#a78bdb', chk:'#a78bdb'},
+  ochtend:   {accent:'#c9a96e', dark:'#3a2414', bg:'#f2e8dc', line:'#c9a96e', chk:'#c9a96e'},
+  fotoshoot: {accent:'#c4a0d8', dark:'#3e1e58', bg:'#f7f2fb', line:'#b888cc', chk:'#b888cc'},
+  opbouw:    {accent:'#7aaa7e', dark:'#1e402a', bg:'#edf5ee', line:'#7aaa7e', chk:'#7aaa7e'},
+  programma: {accent:'#c8737a', dark:'#5a2028', bg:'#fdf0f1', line:'#c8737a', chk:'#c8737a'},
+};
+function applyPhaseTheme(phaseId){
+  const t=PHASE_THEMES[phaseId]||PHASE_THEMES.ochtend;
+  const r=document.documentElement.style;
+  r.setProperty('--phase-accent',t.accent);
+  r.setProperty('--phase-dark',t.dark);
+  r.setProperty('--phase-line',t.line);
+  document.body.style.backgroundColor=t.bg;
+  // header gradient
+  document.getElementById('hero').style.background=
+    `linear-gradient(160deg,${t.dark} 0%,${t.accent}33 55%,${t.dark} 100%)`;
+}
+
 /* ── AUTO-PHASE ── */
 function autoPhase(){
   const now=Date.now();let best=-1,bestDiff=Infinity;
@@ -585,7 +648,10 @@ function renderPhase(){
   }
 
   const active=activeSet(items);
-  const cards=items.map(item=>{
+  // Spotlight: eerste unchecked item
+  const spotlightId=items.find(i=>!+i.is_done)?.id??null;
+
+  const cards=items.map((item,idx)=>{
     const done=+item.is_done;
     const queued=!done&&!active.has(item.id);
     const ms=item.time_start?toMs(item.time_start,ph.date):null;
@@ -610,7 +676,9 @@ function renderPhase(){
     const tapAttr=queued?'':`onclick="tapCard(event,'${item.id}')"`;
     const chkClick=queued?'event.stopPropagation()':`toggleDone(event,'${item.id}')`;
 
-    return`<div class="tl-item${cls?' '+cls:''}${queued?' queued':''}" id="card-${item.id}">
+    const isSpotlight=!done&&!queued&&item.id===spotlightId;
+    const delay=idx*48;
+    return`<div class="tl-item entering${cls?' '+cls:''}${queued?' queued':''}${isSpotlight?' spotlight':''}" id="card-${item.id}" style="animation-delay:${delay}ms">
       <div class="tl-dot"></div>
       <div class="tl-card" ${tapAttr}>
         <div class="tl-row">
@@ -636,12 +704,18 @@ function renderPhase(){
   document.getElementById('phaseContent').innerHTML=
     `<div class="tl-phase-label">${ph.emoji} ${ph.label}</div>
      ${banner}
-     <div class="timeline">${cards}</div>`;
+     <div class="timeline" id="timeline">${cards}</div>`;
+  // Trigger zelf-tekenende lijn na volgende frame
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const tl=document.getElementById('timeline');
+    if(tl)tl.classList.add('drawn');
+  }));
 }
 
 /* ── NAVIGATION ── */
 function goPhase(idx){
   activePhaseIdx=idx;
+  applyPhaseTheme(D.phases[idx]?.id);
   renderStrip();renderPhase();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -824,6 +898,7 @@ function tick(){
 
 /* ── INIT ── */
 activePhaseIdx=autoPhase();
+applyPhaseTheme(D.phases[activePhaseIdx]?.id);
 renderStrip();renderPhase();updateProgress();tick();
 setInterval(tick,30000);poll();
 </script>

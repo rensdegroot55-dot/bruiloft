@@ -38,7 +38,7 @@ if ($action === 'get_all' || $_SERVER['REQUEST_METHOD'] === 'GET' && !$action) {
                 s.on_time, s.checked_at
          FROM items i
          LEFT JOIN state s ON s.item_id = i.id
-         ORDER BY i.phase_id, i.sort_order"
+         ORDER BY i.phase_id, i.time_start IS NULL, i.time_start, i.sort_order"
     )->fetchAll(PDO::FETCH_ASSOC);
 
     $corsages = $pdo->query(

@@ -81,6 +81,19 @@ $items  = $loggedIn ? $pdo->query(
     "SELECT i.*, COALESCE(s.is_done,0) as is_done FROM items i
      LEFT JOIN state s ON s.item_id=i.id ORDER BY i.phase_id, i.sort_order"
 )->fetchAll(PDO::FETCH_ASSOC) : [];
+
+// items hersorteren op tijdstip voor weergave
+usort($items, fn($a,$b) => [
+    $a['phase_id'],
+    ($a['time_start'] === null ? 1 : 0),
+    $a['time_start'] ?? '',
+    $a['sort_order'],
+] <=> [
+    $b['phase_id'],
+    ($b['time_start'] === null ? 1 : 0),
+    $b['time_start'] ?? '',
+    $b['sort_order'],
+]);
 ?><!DOCTYPE html>
 <html lang="nl">
 <head>

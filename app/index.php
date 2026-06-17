@@ -1,4 +1,81 @@
 <?php
+session_start();
+require_once __DIR__ . '/config.php';
+
+// ── Viewer login ──────────────────────────────────────────────────────────────
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: index.php');
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vpw'])) {
+    if ($_POST['vpw'] === VIEWER_PASSWORD) {
+        $_SESSION['viewer'] = true;
+        $_SESSION['viewer_at'] = time();
+    } else {
+        $loginError = true;
+    }
+}
+// 4-uur sessie-verval
+if (!empty($_SESSION['viewer_at']) && time() - $_SESSION['viewer_at'] > 14400) {
+    session_destroy(); session_start();
+}
+if (empty($_SESSION['viewer'])): ?><!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>💍 Danique & Rens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;font-family:'Inter',sans-serif;
+  background:linear-gradient(160deg,#1e1510 0%,#3a2414 55%,#2a1c12 100%);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:rgba(255,252,249,.97);border-radius:24px;
+  padding:36px 28px 32px;width:100%;max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.login-ring{font-size:2.6rem;text-align:center;margin-bottom:8px}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;
+  text-align:center;color:#2d2420}
+.login-sub{font-size:.72rem;color:#7a6258;text-align:center;
+  margin:5px 0 26px;letter-spacing:.06em;text-transform:uppercase}
+.fg{margin-bottom:16px}
+label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#7a6258;margin-bottom:6px}
+input[type=password]{width:100%;padding:12px 14px;border:1.5px solid rgba(201,169,110,.3);
+  border-radius:12px;font-family:'Inter',sans-serif;font-size:1rem;color:#2d2420;
+  background:#fffcf9;-webkit-appearance:none;transition:border-color .2s}
+input[type=password]:focus{outline:none;border-color:#c9a96e}
+.btn-login{width:100%;padding:13px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,#3a2414,#5a3820);color:#f5ede0;
+  font-family:'Inter',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;
+  transition:opacity .2s;margin-top:4px}
+.btn-login:active{opacity:.8}
+.err{font-size:.8rem;color:#c0392b;text-align:center;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="login-ring">💍</div>
+  <div class="login-title">Danique <em style="color:#c9a96e;font-style:italic">&</em> Rens</div>
+  <div class="login-sub">9 augustus 2026 · Hoeve Zzamen</div>
+  <?php if (!empty($loginError)): ?>
+    <div class="err">Ongeldig wachtwoord, probeer opnieuw.</div>
+  <?php endif ?>
+  <form method="POST">
+    <div class="fg">
+      <label>Wachtwoord</label>
+      <input type="password" name="vpw" autofocus placeholder="••••••••" required/>
+    </div>
+    <button class="btn-login" type="submit">Inloggen</button>
+  </form>
+</div>
+</body>
+</html>
+<?php exit; endif;
+
 require_once __DIR__ . '/db.php';
 $pdo = get_db();
 
@@ -7,7 +84,7 @@ $items    = $pdo->query(
     "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note,
             s.on_time, s.checked_at
      FROM items i LEFT JOIN state s ON s.item_id=i.id
-     ORDER BY i.phase_id, i.sort_order"
+     ORDER BY i.phase_id, i.time_start IS NULL, i.time_start, i.sort_order"
 )->fetchAll(PDO::FETCH_ASSOC);
 $corsages = $pdo->query("SELECT * FROM corsages ORDER BY sort_order")->fetchAll(PDO::FETCH_ASSOC);
 $lastId   = $pdo->query("SELECT COALESCE(MAX(id),0) FROM changelog")->fetchColumn();
@@ -422,6 +499,7 @@ body{transition:background-color .55s ease}
 .nb.active{color:var(--ink)}
 .nb .ni{font-size:1.35rem;line-height:1;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
 .nb.active .ni{transform:scale(1.18)}
+.nb-logout{text-decoration:none;color:var(--ink-faint)}
 
 /* ── NOTES SHEET ── */
 .sheet-bg{position:fixed;inset:0;background:rgba(45,36,32,.45);z-index:400;
@@ -520,6 +598,7 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
   <button class="nb" id="nav-contacten" onclick="showView('contacten')"><span class="ni">👥</span>Contacten</button>
   <button class="nb" id="nav-corsages" onclick="showView('corsages')"><span class="ni">🌸</span>Corsages</button>
   <button class="nb" id="nav-punten" onclick="showView('punten')"><span class="ni">⚠️</span>Openstaand</button>
+  <a class="nb nb-logout" href="index.php?logout=1" title="Uitloggen"><span class="ni">🔒</span>Uit</a>
 </nav>
 
 <div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
@@ -725,7 +804,7 @@ function goPhase(idx){
   activePhaseIdx=idx;
   applyPhaseTheme(D.phases[idx]?.id);
   renderStrip();renderPhase();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'instant'});
 }
 
 function showView(v){
@@ -762,11 +841,28 @@ document.addEventListener('touchend',()=>{
   _dx=0;
 });
 
-/* ── GLASSMORPHISM HEADER SHRINK ── */
+/* ── GLASSMORPHISM HEADER SHRINK + DYNAMISCHE HOOGTE ── */
 (function(){
   const hero=document.getElementById('hero');
   const strip=document.getElementById('phaseStrip');
   let compact=false;
+
+  function updateHeaderH(){
+    const h=hero.offsetHeight;
+    if(compact){
+      document.documentElement.style.setProperty('--header-compact',h+'px');
+    }else{
+      document.documentElement.style.setProperty('--header-h',h+'px');
+    }
+  }
+  // Initieel meten zodra DOM is geladen
+  updateHeaderH();
+  window.addEventListener('resize',updateHeaderH,{passive:true});
+  // Na CSS-transitie opnieuw meten
+  hero.addEventListener('transitionend',e=>{
+    if(e.propertyName==='padding'||e.propertyName==='font-size')updateHeaderH();
+  });
+
   window.addEventListener('scroll',()=>{
     const shouldCompact=window.scrollY>60;
     if(shouldCompact!==compact){

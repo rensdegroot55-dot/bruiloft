@@ -103,9 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $d['id'] ?? '';
             if (!$id) { json_error('Missing id'); }
 
-            $exists = $pdo->prepare("SELECT 1 FROM items WHERE id=?")->execute([$id]);
-            if ($pdo->prepare("SELECT COUNT(*) FROM items WHERE id=?")->execute([$id])
-                && $pdo->query("SELECT COUNT(*) FROM items WHERE id='$id'")->fetchColumn()) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM items WHERE id=?");
+            $stmt->execute([$id]);
+            if ($stmt->fetchColumn()) {
                 $pdo->prepare(
                     "UPDATE items SET time_start=?,time_end=?,who=?,what=?,location=?,is_secret=? WHERE id=?"
                 )->execute([
@@ -148,6 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             json_error('Unknown action');
     }
 }
+
+// Catch-all: onbekende GET action of leeg verzoek
+json_error('Unknown action');
 
 function require_admin(): void {
     $auth = $_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '';

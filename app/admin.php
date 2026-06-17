@@ -221,7 +221,7 @@ usort($items, fn($a,$b) => [
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-title">💍 Admin</div>
-    <div class="login-sub">Draaiboek Danique &amp; Rens · 9 augustus 2026</div>
+    <div class="login-sub">Draaiboek Danique &amp; Rens · 8 augustus 2026</div>
     <?php if (!empty($error)): ?>
       <div class="error-msg"><?= htmlspecialchars($error) ?></div>
     <?php endif ?>

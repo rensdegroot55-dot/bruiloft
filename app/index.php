@@ -60,7 +60,7 @@ input[type=password]:focus{outline:none;border-color:#c9a96e}
 <div class="login-card">
   <div class="login-ring">💍</div>
   <div class="login-title">Danique <em style="color:#c9a96e;font-style:italic">&</em> Rens</div>
-  <div class="login-sub">9 augustus 2026 · Hoeve Zzamen</div>
+  <div class="login-sub">8 augustus 2026 · Hoeve Zzamen</div>
   <?php if (!empty($loginError)): ?>
     <div class="err">Ongeldig wachtwoord, probeer opnieuw.</div>
   <?php endif ?>
@@ -546,7 +546,7 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
     <div class="hero-top">
       <div>
         <div class="hero-title">Danique <em>&</em> Rens</div>
-        <div class="hero-sub">9 augustus 2026 · Hoeve Zzamen</div>
+        <div class="hero-sub">8 augustus 2026 · Hoeve Zzamen</div>
       </div>
       <div style="text-align:right">
         <div id="liveClock">--:--</div>

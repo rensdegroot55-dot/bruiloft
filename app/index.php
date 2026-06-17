@@ -507,8 +507,13 @@ function toMs(t,date){
 }
 function cd(ms){
   const min=Math.round((ms-Date.now())/60000),abs=Math.abs(min);
-  const h=Math.floor(abs/60),m=abs%60;
-  return{val:h>0?`${h}u${m>0?m+'m':''}`:m+'m',late:min<0,soon:min>=0&&min<=30,unit:min>=0?'nog':'te laat'};
+  const days=Math.floor(abs/1440),h=Math.floor((abs%1440)/60),m=abs%60;
+  let val;
+  if(days>=7)val=Math.floor(days/7)+'w'+(days%7?days%7+'d':'');
+  else if(days>=1)val=days+'d'+(h>0?h+'u':'');
+  else if(h>0)val=h+'u'+(m>0?m+'m':'');
+  else val=m+'m';
+  return{val,late:min<0,soon:min>=0&&min<=30,unit:min>=0?'nog':'te laat'};
 }
 
 /* ── AUTO-PHASE ── */
@@ -705,7 +710,7 @@ async function toggleDone(e,id){
     onTime=Date.now()<=ms?1:0;
     item.on_time=onTime;
   }else{item.on_time=null;}
-  if(item.is_done){spawnConfetti(e);vibrate();showToast(onTime===1?'Op tijd! 😊':'Te laat 😠');}
+  if(item.is_done){spawnConfetti(e);vibrate();showToast(onTime===1?'Op tijd! 😊':onTime===0?'Te laat 😠':'Afgevinkt ✓');}
   renderPhase();renderStrip();updateProgress();
   await api('toggle_item',{id,done:item.is_done,on_time:onTime});
 }

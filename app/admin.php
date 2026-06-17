@@ -18,7 +18,7 @@ if (isset($_GET['logout'])) {
 }
 $loggedIn = !empty($_SESSION['admin']);
 
-// ── Handle AJAX from admin panel ────────────────────────────────────────────
+// ── Handle AJAX ─────────────────────────────────────────────────────────────
 if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax'])) {
     header('Content-Type: application/json');
     $pdo = get_db();
@@ -26,9 +26,7 @@ if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']))
 
     if ($a === 'save_item') {
         $id = trim($_POST['id']);
-        $exists = $pdo->prepare("SELECT COUNT(*) FROM items WHERE id=?")->execute([$id])
-            && $pdo->query("SELECT COUNT(*) FROM items WHERE id=" . $pdo->quote($id))->fetchColumn();
-
+        $exists = $pdo->query("SELECT COUNT(*) FROM items WHERE id=" . $pdo->quote($id))->fetchColumn();
         if ($exists) {
             $pdo->prepare(
                 "UPDATE items SET time_start=?,time_end=?,who=?,what=?,location=?,is_secret=? WHERE id=?"
@@ -76,8 +74,8 @@ if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax']))
     exit;
 }
 
-// ── Load data for display ────────────────────────────────────────────────────
-$pdo = $loggedIn ? get_db() : null;
+// ── Load data ────────────────────────────────────────────────────────────────
+$pdo    = $loggedIn ? get_db() : null;
 $phases = $loggedIn ? $pdo->query("SELECT * FROM phases ORDER BY sort_order")->fetchAll(PDO::FETCH_ASSOC) : [];
 $items  = $loggedIn ? $pdo->query(
     "SELECT i.*, COALESCE(s.is_done,0) as is_done FROM items i
@@ -87,81 +85,118 @@ $items  = $loggedIn ? $pdo->query(
 <html lang="nl">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Admin · Draaiboek Danique & Rens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --gold:#c9a96e; --ink:#2d2420; --soft:#7a6258;
-    --surface:#fffcf9; --border:rgba(201,169,110,0.2);
-    --red:#c0392b; --green:#4a7c59; --sage:#edf5f0;
+  :root{
+    --gold:#c9a96e;--ink:#2d2420;--soft:#7a6258;
+    --surface:#fffcf9;--border:rgba(201,169,110,.22);
+    --red:#c0392b;--green:#4a7c59;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Inter',sans-serif;background:#f7f0e8;color:var(--ink);min-height:100vh}
+  html,body{height:100%;font-family:'Inter',sans-serif;background:#f7f0e8;color:var(--ink)}
 
-  /* LOGIN */
+  /* ── LOGIN ── */
   .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-  .login-card{background:var(--surface);border-radius:20px;padding:36px 28px;width:100%;max-width:360px;
-    box-shadow:0 8px 40px rgba(45,36,32,0.13)}
-  .login-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--ink);text-align:center}
-  .login-sub{font-size:0.8rem;color:var(--soft);text-align:center;margin-top:6px;margin-bottom:28px}
-  .form-group{margin-bottom:16px}
-  label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);display:block;margin-bottom:6px}
+  .login-card{background:var(--surface);border-radius:20px;padding:36px 24px;width:100%;max-width:360px;
+    box-shadow:0 8px 40px rgba(45,36,32,.13)}
+  .login-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;text-align:center}
+  .login-sub{font-size:.8rem;color:var(--soft);text-align:center;margin:6px 0 28px}
+  .error-msg{color:var(--red);font-size:.82rem;margin-bottom:14px;text-align:center}
+
+  /* ── FORMS ── */
+  .fg{margin-bottom:14px}
+  label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--soft);margin-bottom:5px}
   input[type=password],input[type=text],input[type=time],select,textarea{
     width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
-    font-family:'Inter',sans-serif;font-size:0.88rem;color:var(--ink);background:var(--surface);
-    transition:border-color .2s}
+    font-family:'Inter',sans-serif;font-size:.88rem;color:var(--ink);background:var(--surface);
+    transition:border-color .2s;-webkit-appearance:none}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
-  .btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--ink);color:#f5ede0;
-    font-family:'Inter',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:opacity .2s}
-  .btn:hover{opacity:.85}
-  .btn-danger{background:var(--red)}
-  .btn-sm{width:auto;padding:6px 14px;font-size:.78rem;border-radius:8px}
-  .btn-gold{background:var(--gold);color:white}
-  .error{color:var(--red);font-size:.82rem;margin-bottom:14px;text-align:center}
+  textarea{resize:vertical;min-height:64px}
 
-  /* ADMIN */
-  .admin-header{background:linear-gradient(135deg,#2d2420,#4a3020);color:#f5ede0;padding:16px 20px;
-    display:flex;justify-content:space-between;align-items:center}
-  .admin-header h1{font-family:'Cormorant Garamond',serif;font-size:1.5rem}
-  .admin-header a{color:var(--gold);font-size:.8rem;text-decoration:none}
+  /* ── BUTTONS ── */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:11px 18px;border-radius:10px;border:none;background:var(--ink);color:#f5ede0;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;
+    transition:opacity .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .btn:active{opacity:.75}
+  .btn-block{width:100%}
+  .btn-sm{padding:7px 13px;font-size:.76rem;border-radius:8px}
+  .btn-gold{background:var(--gold);color:#fff}
+  .btn-danger{background:var(--red);color:#fff}
+  .btn-ghost{background:rgba(45,36,32,.08);color:var(--ink)}
 
-  .admin-body{max-width:900px;margin:24px auto;padding:0 16px}
+  /* ── ADMIN HEADER ── */
+  .admin-hdr{background:linear-gradient(135deg,#2d2420,#4a3020);color:#f5ede0;
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;z-index:100}
+  .admin-hdr h1{font-family:'Cormorant Garamond',serif;font-size:1.4rem}
+  .admin-hdr a{color:var(--gold);font-size:.8rem;text-decoration:none;padding:6px 10px;
+    border-radius:8px;border:1px solid rgba(201,169,110,.4)}
 
-  .card{background:var(--surface);border-radius:16px;box-shadow:0 2px 12px rgba(45,36,32,.07);
-    border:1px solid var(--border);margin-bottom:20px;overflow:hidden}
-  .card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;
-    justify-content:space-between;align-items:center}
-  .card-head h2{font-size:.95rem;font-weight:700}
-  .card-body{padding:16px 18px}
+  /* ── PAGE BODY ── */
+  .admin-body{padding:16px;max-width:700px;margin:0 auto;padding-bottom:40px}
 
-  table{width:100%;border-collapse:collapse;font-size:.82rem}
-  th{text-align:left;padding:8px 10px;font-size:.68rem;font-weight:700;text-transform:uppercase;
-    letter-spacing:.08em;color:var(--soft);border-bottom:2px solid var(--border)}
-  td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
-  tr:last-child td{border:none}
-  tr.done td{opacity:.5;text-decoration:line-through}
-  .badge-secret{background:#9b59b6;color:white;border-radius:6px;padding:1px 7px;
-    font-size:.65rem;font-weight:700}
+  /* ── PHASE SECTION ── */
+  .phase-section{margin-bottom:24px}
+  .phase-hdr{display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:10px;padding:0 2px}
+  .phase-hdr h2{font-family:'Cormorant Garamond',serif;font-size:1.2rem}
 
-  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;
-    align-items:center;justify-content:center;padding:20px}
+  /* ── ITEM CARD ── */
+  .item-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);
+    margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(45,36,32,.05)}
+  .item-card.done{opacity:.5}
+  .item-main{padding:12px 14px}
+  .item-time{font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:3px;letter-spacing:.03em}
+  .item-what{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:3px;line-height:1.35}
+  .item-who{font-size:.78rem;color:var(--soft)}
+  .item-loc{font-size:.73rem;color:#b8a89e;margin-top:2px}
+  .badge-secret{background:#9b59b6;color:#fff;border-radius:6px;padding:1px 7px;
+    font-size:.62rem;font-weight:700;vertical-align:middle;margin-left:5px}
+  .item-actions{border-top:1px solid var(--border);display:flex;background:#faf6f0}
+  .item-actions button{flex:1;border:none;background:none;padding:10px;cursor:pointer;
+    font-size:.78rem;font-weight:600;color:var(--soft);transition:background .15s;
+    -webkit-tap-highlight-color:transparent}
+  .item-actions button:first-child{border-right:1px solid var(--border)}
+  .item-actions button:hover,.item-actions button:active{background:rgba(201,169,110,.12)}
+  .item-actions .del-btn{color:var(--red)}
+
+  /* ── DANGER ZONE ── */
+  .danger-card{border:2px solid var(--red);border-radius:14px;padding:16px;margin-top:8px;
+    background:var(--surface)}
+  .danger-title{font-size:.72rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--red);margin-bottom:8px}
+
+  /* ── MODAL (bottom sheet on mobile) ── */
+  .modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);
+    align-items:flex-end;justify-content:center}
   .modal-bg.open{display:flex}
-  .modal{background:var(--surface);border-radius:18px;width:100%;max-width:500px;
-    padding:24px;box-shadow:0 16px 48px rgba(0,0,0,.2)}
+  .modal{background:var(--surface);width:100%;max-width:540px;
+    border-radius:22px 22px 0 0;padding:24px 20px 32px;
+    max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  @media(min-width:600px){
+    .modal-bg{align-items:center}
+    .modal{border-radius:18px;max-height:90vh}
+  }
+  .modal-drag{width:40px;height:4px;background:var(--border);border-radius:2px;
+    margin:0 auto 18px}
   .modal h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-bottom:18px}
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .modal-actions{display:flex;gap:10px;margin-top:18px}
+  .modal-actions{display:flex;gap:10px;margin-top:20px}
+  .check-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+  .check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--gold);flex-shrink:0}
+  .check-row label{text-transform:none;letter-spacing:0;font-size:.88rem;font-weight:500;margin:0}
 
-  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
-    background:var(--ink);color:#f5ede0;padding:10px 20px;border-radius:30px;
-    font-size:.82rem;font-weight:600;transition:transform .3s ease;z-index:999;white-space:nowrap}
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--ink);color:#f5ede0;padding:10px 22px;border-radius:30px;
+    font-size:.82rem;font-weight:600;transition:transform .3s ease;z-index:999;white-space:nowrap;
+    pointer-events:none}
   .toast.show{transform:translateX(-50%) translateY(0)}
-
-  .danger-zone{border:2px solid var(--red);border-radius:12px;padding:14px 16px;margin-top:8px}
-  .danger-title{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
-    color:var(--red);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -171,124 +206,116 @@ $items  = $loggedIn ? $pdo->query(
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-title">💍 Admin</div>
-    <div class="login-sub">Draaiboek Danique & Rens · 9 augustus 2026</div>
+    <div class="login-sub">Draaiboek Danique &amp; Rens · 9 augustus 2026</div>
     <?php if (!empty($error)): ?>
-      <div class="error"><?= htmlspecialchars($error) ?></div>
+      <div class="error-msg"><?= htmlspecialchars($error) ?></div>
     <?php endif ?>
     <form method="POST">
-      <div class="form-group">
+      <div class="fg">
         <label>Wachtwoord</label>
         <input type="password" name="password" autofocus placeholder="••••••••" required/>
       </div>
-      <button class="btn" type="submit">Inloggen</button>
+      <button class="btn btn-block" type="submit">Inloggen</button>
     </form>
   </div>
 </div>
 
 <?php else: ?>
 <!-- ── ADMIN PANEL ── -->
-<div class="admin-header">
-  <h1>⚙️ Draaiboek beheer</h1>
+<div class="admin-hdr">
+  <h1>⚙️ Beheer</h1>
   <a href="?logout=1">Uitloggen</a>
 </div>
 
 <div class="admin-body">
 
-  <!-- PER FASE -->
   <?php foreach ($phases as $phase):
-    $phaseItems = array_filter($items, fn($i) => $i['phase_id'] === $phase['id']);
+    $phaseItems = array_values(array_filter($items, fn($i) => $i['phase_id'] === $phase['id']));
   ?>
-  <div class="card">
-    <div class="card-head">
+  <div class="phase-section">
+    <div class="phase-hdr">
       <h2><?= $phase['emoji'] ?> <?= htmlspecialchars($phase['label']) ?></h2>
-      <button class="btn btn-sm btn-gold" onclick="openNew('<?= $phase['id'] ?>', '<?= $phase['date'] ?>')">+ Toevoegen</button>
+      <button class="btn btn-sm btn-gold" onclick="openNew('<?= $phase['id'] ?>','<?= $phase['date'] ?>')">+ Nieuw</button>
     </div>
-    <div class="card-body" style="padding:0">
-      <table>
-        <thead>
-          <tr><th>Tijd</th><th>Wat</th><th>Wie</th><th>Locatie</th><th></th></tr>
-        </thead>
-        <tbody>
-          <?php foreach ($phaseItems as $item): ?>
-          <tr class="<?= $item['is_done'] ? 'done' : '' ?>">
-            <td style="white-space:nowrap;color:#c9a96e;font-weight:700">
-              <?= $item['time_start'] ? htmlspecialchars($item['time_start']) : '—' ?>
-              <?= $item['time_end'] ? '–' . htmlspecialchars($item['time_end']) : '' ?>
-            </td>
-            <td>
-              <?= htmlspecialchars($item['what']) ?>
-              <?= $item['is_secret'] ? '<span class="badge-secret">🎺</span>' : '' ?>
-            </td>
-            <td style="color:#7a6258"><?= htmlspecialchars($item['who']) ?></td>
-            <td style="color:#b8a89e;font-size:.75rem"><?= htmlspecialchars($item['location']) ?></td>
-            <td style="white-space:nowrap">
-              <button class="btn btn-sm" onclick="openEdit(<?= htmlspecialchars(json_encode($item)) ?>)">✏️</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteItem('<?= $item['id'] ?>')">🗑</button>
-            </td>
-          </tr>
-          <?php endforeach ?>
-        </tbody>
-      </table>
+
+    <?php foreach ($phaseItems as $item): ?>
+    <div class="item-card<?= $item['is_done'] ? ' done' : '' ?>">
+      <div class="item-main">
+        <div class="item-time">
+          <?= $item['time_start'] ? htmlspecialchars($item['time_start']) : '—' ?>
+          <?= $item['time_end'] ? ' – ' . htmlspecialchars($item['time_end']) : '' ?>
+        </div>
+        <div class="item-what">
+          <?= htmlspecialchars($item['what']) ?>
+          <?= $item['is_secret'] ? '<span class="badge-secret">🎺 verrassing</span>' : '' ?>
+        </div>
+        <div class="item-who"><?= htmlspecialchars($item['who']) ?></div>
+        <?php if ($item['location']): ?>
+        <div class="item-loc">📍 <?= htmlspecialchars($item['location']) ?></div>
+        <?php endif ?>
+      </div>
+      <div class="item-actions">
+        <button onclick="openEdit(<?= htmlspecialchars(json_encode($item)) ?>)">✏️ Bewerken</button>
+        <button class="del-btn" onclick="deleteItem('<?= $item['id'] ?>')">🗑 Verwijderen</button>
+      </div>
     </div>
+    <?php endforeach ?>
+
+    <?php if (empty($phaseItems)): ?>
+    <p style="font-size:.8rem;color:var(--soft);padding:8px 2px">Geen items in deze fase.</p>
+    <?php endif ?>
   </div>
   <?php endforeach ?>
 
   <!-- DANGER ZONE -->
-  <div class="card">
-    <div class="card-head"><h2>⚠️ Beheer</h2></div>
-    <div class="card-body">
-      <div class="danger-zone">
-        <div class="danger-title">Gevaarlijke acties</div>
-        <p style="font-size:.82rem;color:#7a6258;margin-bottom:12px">
-          Reset alle vinkjes en notities (handige herstart na een repetitie).
-        </p>
-        <button class="btn btn-sm btn-danger" onclick="resetState()">🔄 Alle voortgang resetten</button>
-      </div>
-    </div>
+  <div class="danger-card">
+    <div class="danger-title">⚠️ Gevaarlijke acties</div>
+    <p style="font-size:.82rem;color:var(--soft);margin-bottom:14px">
+      Reset alle vinkjes en notities. Handig na een repetitie.
+    </p>
+    <button class="btn btn-sm btn-danger" onclick="resetState()">🔄 Alles resetten</button>
   </div>
 
 </div>
 
-<!-- ── EDIT MODAL ── -->
+<!-- ── EDIT / NEW MODAL ── -->
 <div class="modal-bg" id="modal">
-  <div class="modal">
+  <div class="modal" id="modalInner">
+    <div class="modal-drag"></div>
     <h3 id="modalTitle">Item bewerken</h3>
     <form id="itemForm">
       <input type="hidden" id="fId" name="id"/>
       <input type="hidden" id="fPhase" name="phase_id"/>
       <input type="hidden" id="fDate" name="date"/>
       <div class="row-2">
-        <div class="form-group">
+        <div class="fg">
           <label>Begintijd</label>
           <input type="time" id="fTimeStart" name="time_start"/>
         </div>
-        <div class="form-group">
+        <div class="fg">
           <label>Eindtijd</label>
           <input type="time" id="fTimeEnd" name="time_end"/>
         </div>
       </div>
-      <div class="form-group">
+      <div class="fg">
         <label>Wat</label>
         <textarea id="fWhat" name="what" rows="2" required></textarea>
       </div>
-      <div class="form-group">
+      <div class="fg">
         <label>Wie</label>
         <input type="text" id="fWho" name="who" required/>
       </div>
-      <div class="form-group">
+      <div class="fg">
         <label>Locatie</label>
         <input type="text" id="fLoc" name="location"/>
       </div>
-      <div class="form-group" style="display:flex;align-items:center;gap:8px">
-        <input type="checkbox" id="fSecret" name="is_secret" style="width:auto"/>
-        <label for="fSecret" style="text-transform:none;letter-spacing:0;font-size:.85rem;margin:0">
-          🎺 Verrassing voor gasten
-        </label>
+      <div class="check-row">
+        <input type="checkbox" id="fSecret" name="is_secret"/>
+        <label for="fSecret">🎺 Verrassing voor gasten</label>
       </div>
       <div class="modal-actions">
         <button type="submit" class="btn" style="flex:1">Opslaan</button>
-        <button type="button" class="btn" style="background:#e0d8d0;color:var(--ink);flex:0 0 auto;width:auto;padding:12px 20px"
-          onclick="closeModal()">Annuleren</button>
+        <button type="button" class="btn btn-ghost" style="flex:0 0 auto" onclick="closeModal()">Annuleren</button>
       </div>
     </form>
   </div>
@@ -297,35 +324,31 @@ $items  = $loggedIn ? $pdo->query(
 <div class="toast" id="toast"></div>
 
 <script>
-let editingId = null;
-
 function openEdit(item) {
-  editingId = item.id;
   document.getElementById('modalTitle').textContent = 'Item bewerken';
-  document.getElementById('fId').value = item.id;
-  document.getElementById('fPhase').value = item.phase_id;
-  document.getElementById('fDate').value = item.date;
+  document.getElementById('fId').value        = item.id;
+  document.getElementById('fPhase').value     = item.phase_id;
+  document.getElementById('fDate').value      = item.date;
   document.getElementById('fTimeStart').value = item.time_start || '';
-  document.getElementById('fTimeEnd').value = item.time_end || '';
-  document.getElementById('fWhat').value = item.what;
-  document.getElementById('fWho').value = item.who;
-  document.getElementById('fLoc').value = item.location;
-  document.getElementById('fSecret').checked = !!parseInt(item.is_secret);
+  document.getElementById('fTimeEnd').value   = item.time_end   || '';
+  document.getElementById('fWhat').value      = item.what;
+  document.getElementById('fWho').value       = item.who;
+  document.getElementById('fLoc').value       = item.location;
+  document.getElementById('fSecret').checked  = !!parseInt(item.is_secret);
   document.getElementById('modal').classList.add('open');
 }
 
 function openNew(phaseId, date) {
-  editingId = null;
   document.getElementById('modalTitle').textContent = 'Nieuw item';
-  document.getElementById('fId').value = 'item_' + Date.now();
-  document.getElementById('fPhase').value = phaseId;
-  document.getElementById('fDate').value = date;
+  document.getElementById('fId').value        = 'item_' + Date.now();
+  document.getElementById('fPhase').value     = phaseId;
+  document.getElementById('fDate').value      = date;
   document.getElementById('fTimeStart').value = '';
-  document.getElementById('fTimeEnd').value = '';
-  document.getElementById('fWhat').value = '';
-  document.getElementById('fWho').value = '';
-  document.getElementById('fLoc').value = '';
-  document.getElementById('fSecret').checked = false;
+  document.getElementById('fTimeEnd').value   = '';
+  document.getElementById('fWhat').value      = '';
+  document.getElementById('fWho').value       = '';
+  document.getElementById('fLoc').value       = '';
+  document.getElementById('fSecret').checked  = false;
   document.getElementById('modal').classList.add('open');
 }
 
@@ -333,15 +356,19 @@ function closeModal() {
   document.getElementById('modal').classList.remove('open');
 }
 
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
 document.getElementById('itemForm').addEventListener('submit', async e => {
   e.preventDefault();
   const fd = new FormData(e.target);
   fd.append('ajax', 'save_item');
-  if (document.getElementById('fSecret').checked) fd.set('is_secret','1');
+  if (!document.getElementById('fSecret').checked) fd.delete('is_secret');
   const r = await fetch('admin.php', { method:'POST', body: fd });
   const j = await r.json();
   if (j.ok) { showToast('Opgeslagen ✓'); setTimeout(() => location.reload(), 800); }
-  else showToast('Fout: ' + j.error);
+  else showToast('Fout: ' + (j.error || '?'));
 });
 
 async function deleteItem(id) {
@@ -368,10 +395,6 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
-document.getElementById('modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal')) closeModal();
-});
 </script>
 
 <?php endif ?>

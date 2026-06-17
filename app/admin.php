@@ -86,11 +86,13 @@ $items  = $loggedIn ? $pdo->query(
 usort($items, fn($a,$b) => [
     $a['phase_id'],
     ($a['time_start'] === null ? 1 : 0),
+    $a['date'] ?? '',
     $a['time_start'] ?? '',
     $a['sort_order'],
 ] <=> [
     $b['phase_id'],
     ($b['time_start'] === null ? 1 : 0),
+    $b['date'] ?? '',
     $b['time_start'] ?? '',
     $b['sort_order'],
 ]);

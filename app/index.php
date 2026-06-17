@@ -84,7 +84,7 @@ $items    = $pdo->query(
     "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note,
             s.on_time, s.checked_at
      FROM items i LEFT JOIN state s ON s.item_id=i.id
-     ORDER BY i.phase_id, i.time_start IS NULL, i.time_start, i.sort_order"
+     ORDER BY i.phase_id, i.time_start IS NULL, i.date, i.time_start, i.sort_order"
 )->fetchAll(PDO::FETCH_ASSOC);
 $corsages = $pdo->query("SELECT * FROM corsages ORDER BY sort_order")->fetchAll(PDO::FETCH_ASSOC);
 $lastId   = $pdo->query("SELECT COALESCE(MAX(id),0) FROM changelog")->fetchColumn();
@@ -1012,7 +1012,7 @@ function tick(){
 }
 
 /* ── INIT ── */
-activePhaseIdx=autoPhase();
+activePhaseIdx=Math.max(0,D.phases.findIndex(p=>p.id==='vrijdag'));
 applyPhaseTheme(D.phases[activePhaseIdx]?.id);
 renderStrip();renderPhase();updateProgress();tick();
 setInterval(tick,30000);poll();

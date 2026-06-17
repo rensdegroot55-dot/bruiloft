@@ -255,8 +255,8 @@ $items  = $loggedIn ? $pdo->query(
         <?php endif ?>
       </div>
       <div class="item-actions">
-        <button onclick="openEdit(<?= htmlspecialchars(json_encode($item)) ?>)">✏️ Bewerken</button>
-        <button class="del-btn" onclick="deleteItem('<?= $item['id'] ?>')">🗑 Verwijderen</button>
+        <button onclick="openEdit(this)" data-item='<?= htmlspecialchars(json_encode($item), ENT_QUOTES) ?>'>✏️ Bewerken</button>
+        <button class="del-btn" onclick="deleteItem('<?= htmlspecialchars($item['id']) ?>')">🗑 Verwijderen</button>
       </div>
     </div>
     <?php endforeach ?>
@@ -324,7 +324,8 @@ $items  = $loggedIn ? $pdo->query(
 <div class="toast" id="toast"></div>
 
 <script>
-function openEdit(item) {
+function openEdit(btn) {
+  const item = JSON.parse(btn.dataset.item);
   document.getElementById('modalTitle').textContent = 'Item bewerken';
   document.getElementById('fId').value        = item.id;
   document.getElementById('fPhase').value     = item.phase_id;

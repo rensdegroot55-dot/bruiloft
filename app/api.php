@@ -61,18 +61,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
 
         case 'toggle_item':
-            $id      = $body['id'] ?? '';
-            $done    = (int)($body['done'] ?? 0);
-            $onTime  = isset($body['on_time']) ? (int)$body['on_time'] : null;
+            $id        = $body['id'] ?? '';
+            $done      = (int)($body['done'] ?? 0);
+            $onTime    = isset($body['on_time']) && $body['on_time'] !== null ? (int)$body['on_time'] : null;
             $checkedAt = $done ? date('Y-m-d H:i:s') : null;
             $pdo->prepare(
-                "INSERT INTO state (item_id, is_done, on_time, checked_at, updated_at)
-                 VALUES (?, ?, ?, ?, datetime('now'))
-                 ON CONFLICT(item_id) DO UPDATE SET
-                   is_done=excluded.is_done,
-                   on_time=excluded.on_time,
-                   checked_at=excluded.checked_at,
-                   updated_at=excluded.updated_at"
+                "INSERT INTO state (item_id, is_done, on_time, checked_at, note)
+                 VALUES (?, ?, ?, ?, '')
+                 ON DUPLICATE KEY UPDATE
+                   is_done=VALUES(is_done),
+                   on_time=VALUES(on_time),
+                   checked_at=VALUES(checked_at)"
             )->execute([$id, $done, $onTime, $checkedAt]);
             log_change($pdo, 'toggle_item', ['id' => $id, 'done' => $done, 'on_time' => $onTime]);
             json_out(['ok' => true]);
@@ -81,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id   = $body['id'] ?? '';
             $note = $body['note'] ?? '';
             $pdo->prepare(
-                "INSERT INTO state (item_id, note, updated_at)
-                 VALUES (?, ?, datetime('now'))
-                 ON CONFLICT(item_id) DO UPDATE SET note=excluded.note, updated_at=excluded.updated_at"
+                "INSERT INTO state (item_id, note, is_done)
+                 VALUES (?, ?, 0)
+                 ON DUPLICATE KEY UPDATE note=VALUES(note)"
             )->execute([$id, $note]);
             log_change($pdo, 'save_note', ['id' => $id, 'note' => $note]);
             json_out(['ok' => true]);

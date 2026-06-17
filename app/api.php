@@ -34,7 +34,8 @@ if ($action === 'get_all' || $_SERVER['REQUEST_METHOD'] === 'GET' && !$action) {
     )->fetchAll(PDO::FETCH_ASSOC);
 
     $items = $pdo->query(
-        "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note
+        "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note,
+                s.on_time, s.checked_at
          FROM items i
          LEFT JOIN state s ON s.item_id = i.id
          ORDER BY i.phase_id, i.sort_order"
@@ -60,14 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
 
         case 'toggle_item':
-            $id   = $body['id'] ?? '';
-            $done = (int)($body['done'] ?? 0);
+            $id      = $body['id'] ?? '';
+            $done    = (int)($body['done'] ?? 0);
+            $onTime  = isset($body['on_time']) ? (int)$body['on_time'] : null;
+            $checkedAt = $done ? date('Y-m-d H:i:s') : null;
             $pdo->prepare(
-                "INSERT INTO state (item_id, is_done, updated_at)
-                 VALUES (?, ?, datetime('now'))
-                 ON CONFLICT(item_id) DO UPDATE SET is_done=excluded.is_done, updated_at=excluded.updated_at"
-            )->execute([$id, $done]);
-            log_change($pdo, 'toggle_item', ['id' => $id, 'done' => $done]);
+                "INSERT INTO state (item_id, is_done, on_time, checked_at, updated_at)
+                 VALUES (?, ?, ?, ?, datetime('now'))
+                 ON CONFLICT(item_id) DO UPDATE SET
+                   is_done=excluded.is_done,
+                   on_time=excluded.on_time,
+                   checked_at=excluded.checked_at,
+                   updated_at=excluded.updated_at"
+            )->execute([$id, $done, $onTime, $checkedAt]);
+            log_change($pdo, 'toggle_item', ['id' => $id, 'done' => $done, 'on_time' => $onTime]);
             json_out(['ok' => true]);
 
         case 'save_note':

@@ -4,7 +4,8 @@ $pdo = get_db();
 
 $phases   = $pdo->query("SELECT * FROM phases ORDER BY sort_order")->fetchAll(PDO::FETCH_ASSOC);
 $items    = $pdo->query(
-    "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note
+    "SELECT i.*, COALESCE(s.is_done,0) as is_done, COALESCE(s.note,'') as note,
+            s.on_time, s.checked_at
      FROM items i LEFT JOIN state s ON s.item_id=i.id
      ORDER BY i.phase_id, i.sort_order"
 )->fetchAll(PDO::FETCH_ASSOC);
@@ -234,6 +235,31 @@ textarea.note:focus{outline:none;border-color:var(--gold)}
 .cor-btn-ic{position:relative;z-index:1;color:#fff;font-size:.8rem;
   opacity:0;transform:scale(0);transition:all .18s .05s}
 .cor-btn.done .cor-btn-ic{opacity:1;transform:scale(1)}
+
+/* ── QUEUED (grayed-out) items ── */
+.item-card.queued{
+  opacity:.38;
+  filter:saturate(0.3);
+  transform:scale(.985);
+  pointer-events:none; /* tapping disabled until active */
+}
+/* smiley badge on completed items */
+.smiley{
+  font-size:1.25rem;
+  flex-shrink:0;
+  animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+/* fade-in when item becomes active */
+@keyframes activateFade{
+  from{opacity:.38;filter:saturate(.3);transform:scale(.985)}
+  to{opacity:1;filter:saturate(1);transform:scale(1)}
+}
+.item-card.just-activated{
+  animation:activateFade .4s cubic-bezier(.4,0,.2,1) forwards;
+  pointer-events:all;
+}
 
 /* open punten */
 .punt{background:var(--surface);border-radius:var(--r);border:1px solid #f5d0a0;
@@ -473,15 +499,35 @@ function buildPanels(){
   positionTrack(false);
 }
 
+/* ── Smiley helper ── */
+function smiley(item, ph){
+  if(!+item.is_done) return '';
+  // item has no scheduled time → neutral done, no smiley needed
+  if(!item.time_start) return '';
+  // on_time: 1 = op tijd, 0 = te laat, null = unknown (old data)
+  const onTime = item.on_time;
+  if(onTime===null||onTime===undefined||onTime==='') return '';
+  return onTime==1
+    ? `<span class="smiley" title="Op tijd gehaald!">😊</span>`
+    : `<span class="smiley" title="Te laat afgevinkt">😠</span>`;
+}
+
+/* ── Which items in a phase are "active" (first 5 unchecked) ── */
+function activeSet(items){
+  const unchecked=items.filter(i=>!+i.is_done);
+  return new Set(unchecked.slice(0,5).map(i=>i.id));
+}
+
 function panelHtml(ph,items,animate){
-  // Next-up banner (only show on the phase that's currently active)
   const now=Date.now();
-  let nextItem=null,nextMs=null,nextPh=null;
+
+  // Next-up banner
+  let nextItem=null,nextMs=null;
   for(const p of D.phases){
     for(const it of D.items.filter(i=>i.phase_id===p.id)){
       if(+it.is_done||!it.time_start)continue;
       const ms=toMs(it.time_start,p.date);
-      if(ms>now){nextItem=it;nextMs=ms;nextPh=p;break;}
+      if(ms>now){nextItem=it;nextMs=ms;break;}
     }
     if(nextItem)break;
   }
@@ -498,27 +544,51 @@ function panelHtml(ph,items,animate){
     </div>`;
   }
 
+  // Determine which items are "active" (first 5 unchecked)
+  const active=activeSet(items);
+
   const cards=items.map(item=>{
     const done=+item.is_done;
     const ms=item.time_start?toMs(item.time_start,ph.date):null;
     const timeLbl=item.time_start?(item.time_end?`${item.time_start}–${item.time_end}`:item.time_start):'';
-    let cls=''; let chipHtml='';
-    if(!done&&ms!==null){
+
+    // queued = not done AND not in active set
+    const queued=!done&&!active.has(item.id);
+
+    let cls='';
+    let chipHtml='';
+    let rightSlot='';
+
+    if(done){
+      cls='is-done';
+      rightSlot=smiley(item,ph);
+    } else if(!queued && ms!==null){
       const r=cd(ms);
       cls=r.late?'is-late':r.soon?'is-soon':'';
       if(+item.is_secret&&!cls)cls='is-secret';
       chipHtml=`<div class="cd ${r.late?'cl':r.soon?'cs':'cf'}">
         <div class="cd-n">${r.val}</div><div class="cd-u">${r.unit}</div></div>`;
-    }else if(done){
-      cls='is-done';
-      chipHtml=`<div class="cd ck"><div class="cd-n">✓</div><div class="cd-u">klaar</div></div>`;
+      rightSlot=chipHtml;
+    } else if(!queued){
+      if(+item.is_secret)cls='is-secret';
+    } else {
+      // queued item — show a subtle countdown if it has a time
+      if(ms!==null){
+        const r=cd(ms);
+        rightSlot=`<div class="cd cf" style="opacity:.45">
+          <div class="cd-n">${r.val}</div><div class="cd-u">${r.unit}</div></div>`;
+      }
     }
-    if(+item.is_secret&&!cls)cls='is-secret';
-    const hasNote=!!(item.note&&item.note.trim());
 
-    return`<div class="item-card ${cls}${animate?' slide-in':''}" id="card-${item.id}">
-      <div class="item-row" onclick="tapCard(event,'${item.id}')">
-        <button class="chk ${done?'on':''}" onclick="toggleDone(event,'${item.id}')">
+    const hasNote=!!(item.note&&item.note.trim());
+    const cardCls=`item-card${cls?' '+cls:''}${queued?' queued':''}${animate?' slide-in':''}`;
+
+    return`<div class="${cardCls}" id="card-${item.id}">
+      <div class="item-row" onclick="${queued?'':` tapCard(event,'${item.id}')`}">
+        <button class="chk ${done?'on':''}"
+          onclick="${queued?'event.stopPropagation()':` toggleDone(event,'${item.id}')`}"
+          style="${queued?'cursor:not-allowed':''}"
+          ${queued?'disabled':''}>
           <span class="chk-icon">✓</span>
         </button>
         <div class="item-body">
@@ -531,7 +601,7 @@ function panelHtml(ph,items,animate){
           <div class="iloc">📍 ${esc(item.location)}</div>
           ${hasNote?`<div style="font-size:.66rem;color:var(--gold);margin-top:3px">📝 ${esc(item.note.split('\n')[0]).substring(0,50)}</div>`:''}
         </div>
-        ${chipHtml}
+        ${rightSlot}
       </div>
     </div>`;
   }).join('');
@@ -626,12 +696,30 @@ async function toggleDone(e,id){
   e.stopPropagation();
   const item=D.items.find(i=>i.id===id);
   if(!item)return;
-  item.is_done=item.is_done?0:1;
-  if(item.is_done){spawnConfetti(e);vibrate();}
+  const wasDone=+item.is_done;
+  item.is_done=wasDone?0:1;
+
+  // Determine on_time when checking off
+  let onTime=null;
+  if(item.is_done&&item.time_start){
+    const ph=D.phases.find(p=>p.id===item.phase_id);
+    const ms=toMs(item.time_start,ph?.date??'2026-08-09');
+    onTime=Date.now()<=ms?1:0; // 1=op tijd, 0=te laat
+  }
+  if(item.is_done){
+    item.on_time=onTime;
+    spawnConfetti(e);
+    vibrate();
+    // show smiley toast
+    showToast(onTime===1?'Op tijd! 😊':'Te laat 😠');
+  } else {
+    item.on_time=null;
+  }
+
   refreshPanel(activePhaseIdx);
   renderStrip();
   updateProgress();
-  await api('toggle_item',{id,done:item.is_done});
+  await api('toggle_item',{id,done:item.is_done,on_time:onTime});
 }
 
 async function toggleCorsage(id){

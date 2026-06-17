@@ -36,6 +36,8 @@ function get_db(): PDO {
             item_id     TEXT PRIMARY KEY,
             is_done     INTEGER NOT NULL DEFAULT 0,
             note        TEXT NOT NULL DEFAULT '',
+            on_time     INTEGER,
+            checked_at  TEXT,
             updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
         );
 

@@ -464,11 +464,11 @@ function goPhase(idx){
 
 function showView(v){
   activeView=v;
-  document.getElementById('viewDraaiboek').style.display=v==='draaiboek'?'':'none';
-  document.getElementById('phaseStrip').style.display=v==='draaiboek'?'':'none';
-  document.getElementById('viewContacten').style.display=v==='contacten'?'':'none';
-  document.getElementById('viewCorsages').style.display=v==='corsages'?'':'none';
-  document.getElementById('viewPunten').style.display=v==='punten'?'':'none';
+  document.getElementById('viewDraaiboek').style.display=v==='draaiboek'?'block':'none';
+  document.getElementById('phaseStrip').style.display=v==='draaiboek'?'flex':'none';
+  document.getElementById('viewContacten').style.display=v==='contacten'?'block':'none';
+  document.getElementById('viewCorsages').style.display=v==='corsages'?'block':'none';
+  document.getElementById('viewPunten').style.display=v==='punten'?'block':'none';
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('nav-'+v).classList.add('active');
   if(v==='contacten')renderContacts();

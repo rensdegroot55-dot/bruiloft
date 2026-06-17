@@ -8,40 +8,23 @@ header('Access-Control-Allow-Headers: Content-Type');
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 $pdo = get_db();
 
-// ── Server-Sent Events stream ────────────────────────────────────────────────
-if ($action === 'stream') {
-    header('Content-Type: text/event-stream');
-    header('Cache-Control: no-cache');
-    header('X-Accel-Buffering: no');
-    set_time_limit(0);
-    ob_implicit_flush(true);
-
+// ── Poll for changes (vervangt SSE, werkt op InfinityFree) ─────────────────
+if ($action === 'poll') {
     $lastId = (int)($_GET['last_id'] ?? 0);
+    $rows = $pdo->prepare(
+        "SELECT id, action, payload FROM changelog WHERE id > ? ORDER BY id ASC LIMIT 50"
+    );
+    $rows->execute([$lastId]);
+    $changes = $rows->fetchAll(PDO::FETCH_ASSOC);
 
-    while (true) {
-        $rows = $pdo->prepare(
-            "SELECT id, action, payload, created_at FROM changelog WHERE id > ? ORDER BY id ASC"
-        );
-        $rows->execute([$lastId]);
-        $changes = $rows->fetchAll(PDO::FETCH_ASSOC);
+    $result = array_map(fn($r) => [
+        'id'      => (int)$r['id'],
+        'action'  => $r['action'],
+        'payload' => json_decode($r['payload'], true),
+    ], $changes);
 
-        foreach ($changes as $row) {
-            echo "id: {$row['id']}\n";
-            echo "event: change\n";
-            echo "data: " . json_encode([
-                'action'  => $row['action'],
-                'payload' => json_decode($row['payload'], true),
-            ]) . "\n\n";
-            $lastId = max($lastId, (int)$row['id']);
-        }
-
-        echo ": heartbeat\n\n";
-        flush();
-
-        if (connection_aborted()) break;
-        sleep(SSE_HEARTBEAT);
-    }
-    exit;
+    $newLastId = count($result) ? max(array_column($result, 'id')) : $lastId;
+    json_out(['changes' => $result, 'last_id' => $newLastId]);
 }
 
 // ── GET: full state ──────────────────────────────────────────────────────────

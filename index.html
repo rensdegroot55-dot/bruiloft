@@ -1,183 +1,245 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Draaiboek 💍 Danique & Rens — 9 augustus 2026</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Danique & Rens · 9 augustus 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --gold: #b8975a;
-      --gold-light: #d4b07a;
-      --gold-dark: #8a6f3e;
-      --cream: #fdf9f3;
-      --cream-dark: #f5ede0;
-      --text: #2c2417;
-      --text-soft: #6b5a42;
-      --green: #4a7c59;
-      --green-bg: #edf5f0;
-      --red: #c0392b;
-      --red-bg: #fdf0ee;
-      --orange: #d68910;
-      --orange-bg: #fef9e7;
-      --gray: #9e9e9e;
-      --gray-bg: #f5f5f5;
-      --white: #ffffff;
-      --shadow: 0 2px 12px rgba(184,151,90,0.12);
-      --radius: 14px;
+      --rose:       #c8737a;
+      --rose-light: #f2dada;
+      --rose-pale:  #fdf5f5;
+      --sage:       #7a9e7e;
+      --sage-light: #d8ead9;
+      --sage-pale:  #f4f9f4;
+      --gold:       #c9a96e;
+      --gold-light: #f0e0c0;
+      --gold-pale:  #fdf8ef;
+      --ink:        #2d2420;
+      --ink-soft:   #7a6258;
+      --ink-faint:  #b8a89e;
+      --surface:    #fffcf9;
+      --border:     rgba(201,169,110,0.18);
+      --shadow-sm:  0 2px 8px rgba(45,36,32,0.07);
+      --shadow-md:  0 4px 20px rgba(45,36,32,0.10);
+      --shadow-lg:  0 8px 40px rgba(45,36,32,0.13);
+      --r-sm: 10px;
+      --r-md: 16px;
+      --r-lg: 22px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--cream);
-      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      background: #f7f0e8;
+      color: var(--ink);
       min-height: 100vh;
-      padding-bottom: 80px;
+      padding-bottom: 90px;
+      overflow-x: hidden;
     }
 
-    /* ── HEADER ── */
-    header {
-      background: linear-gradient(135deg, #2c1f0e 0%, #4a3318 100%);
-      color: var(--cream);
-      padding: 20px 16px 16px;
+    /* ─── HERO ─────────────────────────────────── */
+    .hero {
+      background: linear-gradient(160deg, #2d2420 0%, #4a3020 50%, #3d2818 100%);
+      padding: 28px 20px 24px;
       position: sticky;
       top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+      z-index: 200;
+      box-shadow: var(--shadow-lg);
     }
-    header h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-    header h1 span { color: var(--gold-light); }
-    header .sub {
-      font-size: 0.8rem;
-      color: var(--gold-light);
-      margin-top: 2px;
-      opacity: 0.9;
-    }
-    .header-row {
+
+    .hero-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
     }
-    #clock {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--gold-light);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0.05em;
+
+    .hero-names {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      color: #f5ede0;
+      line-height: 1;
+      letter-spacing: 0.01em;
     }
-    .progress-bar-wrap {
-      margin-top: 12px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 6px;
-      height: 6px;
-      overflow: hidden;
+    .hero-names em {
+      color: var(--gold);
+      font-style: italic;
     }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--gold-light);
-      border-radius: 6px;
-      transition: width 0.5s ease;
-    }
-    .progress-label {
+    .hero-date {
       font-size: 0.72rem;
-      color: rgba(255,255,255,0.7);
-      margin-top: 4px;
+      color: rgba(245,237,224,0.6);
+      margin-top: 5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
     }
 
-    /* ── TABS ── */
-    .tabs-scroll {
+    .hero-clock-wrap { text-align: right; }
+    #liveClock {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .hero-clock-label {
+      font-size: 0.62rem;
+      color: rgba(245,237,224,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+
+    .hero-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 14px 0;
+      opacity: 0.4;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--rose), var(--gold));
+      border-radius: 4px;
+      transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-text {
+      font-size: 0.7rem;
+      color: rgba(245,237,224,0.55);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+
+    /* ─── TABS ─────────────────────────────────── */
+    .tab-strip {
       display: flex;
       overflow-x: auto;
-      gap: 8px;
-      padding: 12px 16px;
-      background: var(--cream-dark);
-      border-bottom: 1px solid rgba(184,151,90,0.2);
+      gap: 6px;
+      padding: 14px 16px 10px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
-    .tabs-scroll::-webkit-scrollbar { display: none; }
-    .tab-btn {
+    .tab-strip::-webkit-scrollbar { display: none; }
+
+    .tab-pill {
       flex-shrink: 0;
-      border: 1.5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: 30px;
+      border: 1.5px solid var(--border);
       background: transparent;
-      color: var(--gold-dark);
-      border-radius: 20px;
-      padding: 6px 14px;
+      color: var(--ink-soft);
       font-size: 0.78rem;
       font-weight: 600;
+      font-family: 'Inter', sans-serif;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.22s ease;
       white-space: nowrap;
     }
-    .tab-btn.active {
-      background: var(--gold);
-      color: var(--white);
-      border-color: var(--gold);
+    .tab-pill.active {
+      background: var(--ink);
+      color: #f5ede0;
+      border-color: var(--ink);
+      box-shadow: var(--shadow-sm);
     }
-    .tab-btn .badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.3);
-      border-radius: 10px;
-      padding: 1px 6px;
-      font-size: 0.68rem;
-      margin-left: 4px;
+    .tab-pill .pill-count {
+      background: rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 1px 7px;
+      font-size: 0.65rem;
     }
-    .tab-btn:not(.active) .badge {
-      background: var(--gold);
-      color: var(--white);
-    }
-
-    /* ── MAIN ── */
-    main { padding: 12px 16px; }
-
-    /* ── SECTION ── */
-    .phase-section { display: none; }
-    .phase-section.active { display: block; }
-
-    .phase-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--gold-dark);
-      margin: 4px 0 12px;
+    .tab-pill:not(.active) .pill-count {
+      background: var(--gold-light);
+      color: #7a5a20;
     }
 
-    /* ── ITEM CARD ── */
-    .item-card {
-      background: var(--white);
-      border-radius: var(--radius);
+    /* ─── CONTENT ──────────────────────────────── */
+    .content-area { padding: 14px 14px 0; }
+
+    /* ─── ITEM CARD ─────────────────────────────── */
+    .item-wrap {
+      position: relative;
       margin-bottom: 10px;
-      box-shadow: var(--shadow);
-      border-left: 4px solid var(--gold);
+    }
+
+    .item-card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
-      transition: opacity 0.3s, box-shadow 0.2s;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 1px solid var(--border);
     }
-    .item-card.done {
-      border-left-color: var(--green);
-      opacity: 0.7;
-    }
-    .item-card.overdue { border-left-color: var(--red); }
-    .item-card.warning { border-left-color: var(--orange); }
-    .item-card.secret { border-left-color: #9b59b6; }
+    .item-card:active { transform: scale(0.985); }
 
-    .card-main {
+    .item-card.is-done {
+      background: var(--sage-pale);
+      border-color: var(--sage-light);
+    }
+    .item-card.is-late {
+      background: #fff5f5;
+      border-color: #f5c0c0;
+    }
+    .item-card.is-soon {
+      background: #fffbf0;
+      border-color: #f0dfa0;
+    }
+    .item-card.is-secret {
+      background: #fbf5ff;
+      border-color: #dfc0f5;
+    }
+
+    /* accent strip on left */
+    .item-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+      background: var(--gold);
+    }
+    .item-card.is-done::before { background: var(--sage); }
+    .item-card.is-late::before { background: var(--rose); }
+    .item-card.is-soon::before { background: #d4a017; }
+    .item-card.is-secret::before { background: #9b59b6; }
+
+    .item-main {
       display: flex;
-      align-items: flex-start;
-      padding: 12px 12px 10px;
-      gap: 10px;
+      align-items: center;
+      padding: 13px 13px 11px 16px;
+      gap: 11px;
       cursor: pointer;
+      user-select: none;
     }
 
-    .check-btn {
+    /* check circle */
+    .check-circle {
       flex-shrink: 0;
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: 2px solid var(--gold);
       background: transparent;
@@ -185,205 +247,282 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-      margin-top: 1px;
+      transition: all 0.25s cubic-bezier(.4,0,.2,1);
+      position: relative;
+      overflow: hidden;
     }
-    .item-card.done .check-btn {
-      background: var(--green);
-      border-color: var(--green);
+    .check-circle::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--sage);
+      transform: scale(0);
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+    }
+    .check-circle.checked { border-color: var(--sage); }
+    .check-circle.checked::after { transform: scale(1); }
+    .check-circle .check-icon {
+      position: relative;
+      z-index: 1;
       color: white;
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: scale(0) rotate(-10deg);
+      transition: all 0.2s 0.05s cubic-bezier(.4,0,.2,1);
     }
-    .item-card.overdue .check-btn { border-color: var(--red); }
-    .item-card.warning .check-btn { border-color: var(--orange); }
+    .check-circle.checked .check-icon {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+    .item-card.is-late .check-circle { border-color: var(--rose); }
+    .item-card.is-soon .check-circle { border-color: #d4a017; }
+    .item-card.is-secret .check-circle { border-color: #9b59b6; }
 
-    .card-body { flex: 1; min-width: 0; }
+    .item-body { flex: 1; min-width: 0; }
 
+    .item-time-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
     .item-time {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      color: var(--gold-dark);
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 2px;
+      letter-spacing: 0.06em;
+      color: var(--gold);
     }
-    .item-card.overdue .item-time { color: var(--red); }
-    .item-card.warning .item-time { color: var(--orange); }
-    .item-card.done .item-time { color: var(--green); }
+    .item-card.is-done .item-time { color: var(--sage); }
+    .item-card.is-late .item-time { color: var(--rose); }
+    .item-card.is-soon .item-time { color: #b8880a; }
+
+    .badge-secret {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: #9b59b6;
+      color: white;
+      border-radius: 6px;
+      padding: 1px 6px;
+      text-transform: uppercase;
+    }
 
     .item-what {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
+      color: var(--ink);
+      line-height: 1.35;
     }
-    .item-card.done .item-what {
+    .item-card.is-done .item-what {
       text-decoration: line-through;
-      color: var(--text-soft);
+      color: var(--ink-faint);
     }
     .item-who {
-      font-size: 0.75rem;
-      color: var(--text-soft);
+      font-size: 0.72rem;
+      color: var(--ink-soft);
       margin-top: 3px;
     }
     .item-loc {
-      font-size: 0.7rem;
-      color: var(--gray);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
       margin-top: 2px;
     }
-    .item-loc::before { content: '📍 '; }
 
-    .secret-badge {
-      display: inline-block;
-      background: #f3e8ff;
-      color: #7c3aed;
-      border-radius: 8px;
-      padding: 1px 7px;
-      font-size: 0.67rem;
-      font-weight: 700;
-      margin-top: 4px;
-      letter-spacing: 0.03em;
-    }
-
-    .countdown-chip {
+    /* countdown chip */
+    .cd-chip {
       flex-shrink: 0;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-variant-numeric: tabular-nums;
-      min-width: 56px;
       text-align: center;
-      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      min-width: 52px;
     }
-    .countdown-chip.future { background: var(--cream-dark); color: var(--text-soft); }
-    .countdown-chip.soon { background: var(--orange-bg); color: var(--orange); }
-    .countdown-chip.overdue { background: var(--red-bg); color: var(--red); }
-    .countdown-chip.done { background: var(--green-bg); color: var(--green); }
-    .countdown-chip.no-time { display: none; }
-
-    /* ── EXPAND DETAILS ── */
-    .card-details {
-      display: none;
-      padding: 0 12px 12px 48px;
-      border-top: 1px solid var(--cream-dark);
+    .cd-number {
+      font-size: 1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
     }
-    .card-details.open { display: block; }
-
-    .notes-area {
-      width: 100%;
-      margin-top: 10px;
-      padding: 8px 10px;
-      border: 1.5px solid var(--cream-dark);
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-family: inherit;
-      color: var(--text);
-      resize: none;
-      min-height: 60px;
-      background: var(--cream);
-      transition: border-color 0.2s;
-    }
-    .notes-area:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
-    .notes-label {
-      font-size: 0.68rem;
-      color: var(--text-soft);
+    .cd-unit {
+      font-size: 0.58rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
+      opacity: 0.75;
+    }
+    .cd-chip.state-future  { color: var(--ink-faint); }
+    .cd-chip.state-soon    { color: #b8880a; }
+    .cd-chip.state-late    { color: var(--rose); }
+    .cd-chip.state-done    { color: var(--sage); }
+    .cd-chip.state-none    { display: none; }
+
+    /* expand / notes */
+    .item-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    .item-expand.open { max-height: 200px; }
+
+    .expand-inner {
+      padding: 0 14px 12px 58px;
+      border-top: 1px solid var(--border);
+    }
+    .notes-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
       margin-top: 10px;
+      margin-bottom: 5px;
+    }
+    textarea.notes {
+      width: 100%;
+      padding: 9px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: var(--ink);
+      background: var(--gold-pale);
+      border: 1.5px solid var(--gold-light);
+      border-radius: var(--r-sm);
+      resize: none;
+      min-height: 64px;
+      transition: border-color 0.2s;
+      line-height: 1.5;
+    }
+    textarea.notes:focus {
+      outline: none;
+      border-color: var(--gold);
     }
 
-    /* ── CONTACTS PAGE ── */
-    .contacts-grid { display: flex; flex-direction: column; gap: 10px; }
+    /* ─── SECTION LABEL ─────────────────────────── */
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.03em;
+      margin: 4px 2px 12px;
+    }
+
+    /* ─── CONTACTS ──────────────────────────────── */
+    .contact-list { display: flex; flex-direction: column; gap: 9px; }
+
     .contact-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      box-shadow: var(--shadow);
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 13px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .contact-avatar {
-      width: 40px;
-      height: 40px;
+    .c-avatar {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background: var(--gold);
+      background: linear-gradient(135deg, var(--gold), var(--rose));
       color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
-      font-weight: 700;
       flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
     }
-    .contact-info { flex: 1; min-width: 0; }
-    .contact-name { font-size: 0.9rem; font-weight: 700; }
-    .contact-role { font-size: 0.75rem; color: var(--text-soft); }
-    .contact-note { font-size: 0.72rem; color: var(--gray); margin-top: 2px; }
+    .c-body { flex: 1; min-width: 0; }
+    .c-name { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+    .c-role { font-size: 0.72rem; color: var(--rose); font-weight: 600; margin-top: 1px; }
+    .c-note { font-size: 0.68rem; color: var(--ink-faint); margin-top: 2px; }
 
-    /* ── OPEN PUNTEN ── */
-    .open-item {
-      background: var(--white);
-      border-radius: var(--radius);
+    /* ─── CORSAGES ──────────────────────────────── */
+    .corsage-intro {
+      background: var(--gold-pale);
+      border: 1px solid var(--gold-light);
+      border-radius: var(--r-md);
       padding: 12px 14px;
-      box-shadow: var(--shadow);
-      margin-bottom: 10px;
-      border-left: 4px solid var(--orange);
-      font-size: 0.85rem;
-      color: var(--text);
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin-bottom: 14px;
+      line-height: 1.5;
     }
-    .open-item::before { content: '⚠️ '; }
-
-    /* ── CORSAGES ── */
-    .corsage-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      box-shadow: var(--shadow);
-      margin-bottom: 8px;
+    .corsage-list { display: flex; flex-direction: column; gap: 9px; }
+    .corsage-row {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 13px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      transition: background 0.2s;
     }
-    .corsage-info .name { font-size: 0.9rem; font-weight: 700; }
-    .corsage-info .role { font-size: 0.75rem; color: var(--text-soft); }
-    .corsage-check {
-      width: 28px;
-      height: 28px;
+    .corsage-row.done { background: var(--sage-pale); border-color: var(--sage-light); }
+    .cor-name { font-size: 0.9rem; font-weight: 700; }
+    .cor-role { font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+    .cor-btn {
+      width: 32px; height: 32px;
       border-radius: 50%;
       border: 2px solid var(--gold);
       background: transparent;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 1rem;
-      transition: all 0.2s;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.22s cubic-bezier(.4,0,.2,1);
+      position: relative; overflow: hidden;
     }
-    .corsage-check.checked {
-      background: var(--green);
-      border-color: var(--green);
+    .cor-btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: var(--sage);
+      transform: scale(0);
+      transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    .cor-btn.done { border-color: var(--sage); }
+    .cor-btn.done::after { transform: scale(1); }
+    .cor-btn-icon {
+      position: relative; z-index: 1;
       color: white;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.18s 0.05s;
     }
+    .cor-btn.done .cor-btn-icon { opacity: 1; transform: scale(1); }
 
-    /* ── BOTTOM NAV ── */
+    /* ─── OPEN PUNTEN ───────────────────────────── */
+    .punt-card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      border: 1px solid #f5d0a0;
+      border-left: 4px solid #d4a017;
+      box-shadow: var(--shadow-sm);
+      padding: 12px 14px;
+      margin-bottom: 9px;
+      font-size: 0.83rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .punt-icon { margin-right: 6px; }
+
+    /* ─── BOTTOM NAV ────────────────────────────── */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--white);
-      border-top: 1px solid var(--cream-dark);
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255,252,249,0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-around;
-      padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
-      z-index: 99;
+      padding: 10px 0 max(12px, env(safe-area-inset-bottom));
+      z-index: 300;
+      box-shadow: 0 -4px 20px rgba(45,36,32,0.08);
     }
     .nav-btn {
       display: flex;
@@ -393,484 +532,584 @@
       background: none;
       border: none;
       cursor: pointer;
-      color: var(--gray);
-      font-size: 0.62rem;
+      color: var(--ink-faint);
+      font-size: 0.6rem;
       font-weight: 600;
-      padding: 4px 10px;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 4px 14px;
       transition: color 0.2s;
+      position: relative;
     }
-    .nav-btn.active { color: var(--gold-dark); }
-    .nav-btn .icon { font-size: 1.4rem; line-height: 1; }
+    .nav-btn.active { color: var(--ink); }
+    .nav-btn .nav-icon {
+      font-size: 1.45rem;
+      line-height: 1;
+      transition: transform 0.2s cubic-bezier(.4,0,.2,1);
+    }
+    .nav-btn.active .nav-icon { transform: scale(1.15); }
+    .nav-dot {
+      position: absolute;
+      top: 2px; right: 10px;
+      width: 7px; height: 7px;
+      background: var(--rose);
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: none;
+    }
+    .nav-dot.visible { display: block; }
 
-    /* ── VIEWS ── */
+    /* ─── VIEWS ─────────────────────────────────── */
     .view { display: none; }
     .view.active { display: block; }
 
-    .section-header {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin: 4px 0 14px;
+    /* ─── CONFETTI ──────────────────────────────── */
+    .confetti-piece {
+      position: fixed;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall 1.2s ease-out forwards;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(160px) rotate(540deg) scale(0.5); opacity: 0; }
     }
 
-    .info-box {
-      background: var(--cream-dark);
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 0.78rem;
-      color: var(--text-soft);
-      margin-bottom: 14px;
+    /* ─── NEXT UP BANNER ────────────────────────── */
+    .next-banner {
+      background: linear-gradient(90deg, var(--rose-pale), var(--gold-pale));
+      border: 1px solid var(--gold-light);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .next-banner-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .next-banner-body { flex: 1; min-width: 0; }
+    .next-banner-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-faint);
+    }
+    .next-banner-what {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 1px;
+    }
+    .next-banner-time {
+      font-size: 0.7rem;
+      color: var(--rose);
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-row">
+<!-- ═══ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-top">
     <div>
-      <h1>💍 <span>Danique & Rens</span></h1>
-      <div class="sub">Zaterdag 9 augustus 2026 · Hoeve Zzamen</div>
+      <div class="hero-names">Danique <em>&</em> Rens</div>
+      <div class="hero-date">Zaterdag · 9 augustus 2026 · Hoeve Zzamen</div>
     </div>
-    <div id="clock">--:--</div>
+    <div class="hero-clock-wrap">
+      <div id="liveClock">--:--</div>
+      <div class="hero-clock-label">Nu</div>
+    </div>
   </div>
-  <div class="progress-bar-wrap" style="margin-top:10px;">
-    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  <div class="hero-divider"></div>
+  <div class="progress-row">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 0</div>
   </div>
-  <div class="progress-label" id="progressLabel">Bezig met laden…</div>
 </header>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active" onclick="showView('draaiboek')" id="nav-draaiboek">
-    <span class="icon">📋</span>Draaiboek
-  </button>
-  <button class="nav-btn" onclick="showView('contacten')" id="nav-contacten">
-    <span class="icon">👥</span>Contacten
-  </button>
-  <button class="nav-btn" onclick="showView('corsages')" id="nav-corsages">
-    <span class="icon">🌸</span>Corsages
-  </button>
-  <button class="nav-btn" onclick="showView('punten')" id="nav-punten">
-    <span class="icon">⚠️</span>Openstaand
-  </button>
-</div>
+<!-- ═══ VIEWS ══════════════════════════════════ -->
 
-<!-- ═══════════════ VIEW: DRAAIBOEK ═══════════════ -->
+<!-- DRAAIBOEK -->
 <div class="view active" id="view-draaiboek">
-  <div class="tabs-scroll" id="phaseTabs"></div>
-  <main id="mainContent"></main>
+  <div class="tab-strip" id="tabStrip"></div>
+  <div class="content-area" id="phaseContent"></div>
 </div>
 
-<!-- ═══════════════ VIEW: CONTACTEN ═══════════════ -->
+<!-- CONTACTEN -->
 <div class="view" id="view-contacten">
-  <main>
-    <div class="section-header">👥 Leveranciers & Contacten</div>
-    <div class="contacts-grid" id="contactsGrid"></div>
-  </main>
+  <div class="content-area">
+    <div class="section-label">Leveranciers & contacten</div>
+    <div class="contact-list" id="contactList"></div>
+  </div>
 </div>
 
-<!-- ═══════════════ VIEW: CORSAGES ═══════════════ -->
+<!-- CORSAGES -->
 <div class="view" id="view-corsages">
-  <main>
-    <div class="section-header">🌸 Corsages & Boeket</div>
-    <div class="info-box">Geleverd door <strong>Het Bloemenhart</strong> (Berkel en Rodenrijs). Vink af wanneer de corsage is uitgedeeld.</div>
-    <div id="corsagesList"></div>
-  </main>
+  <div class="content-area">
+    <div class="section-label">Corsages & boeket</div>
+    <div class="corsage-intro">
+      🌸 Geleverd door <strong>Het Bloemenhart</strong> (Berkel en Rodenrijs).<br>
+      Vink af zodra de corsage is overhandigd.
+    </div>
+    <div class="corsage-list" id="corsageList"></div>
+  </div>
 </div>
 
-<!-- ═══════════════ VIEW: OPENSTAANDE PUNTEN ═══════════════ -->
+<!-- OPENSTAAND -->
 <div class="view" id="view-punten">
-  <main>
-    <div class="section-header">⚠️ Openstaande Punten</div>
-    <div id="openPuntenList"></div>
-  </main>
+  <div class="content-area">
+    <div class="section-label">Openstaande punten</div>
+    <div id="puntenList"></div>
+  </div>
 </div>
+
+<!-- ═══ BOTTOM NAV ══════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-draaiboek" onclick="showView('draaiboek')">
+    <span class="nav-icon">📋</span>Draaiboek
+  </button>
+  <button class="nav-btn" id="nav-contacten" onclick="showView('contacten')">
+    <span class="nav-icon">👥</span>Contacten
+  </button>
+  <button class="nav-btn" id="nav-corsages" onclick="showView('corsages')">
+    <span class="nav-icon">🌸</span>Corsages
+  </button>
+  <button class="nav-btn" id="nav-punten" onclick="showView('punten')">
+    <span class="nav-icon">⚠️</span>Openstaand
+    <span class="nav-dot visible" id="puntDot"></span>
+  </button>
+</nav>
 
 <script>
-// ═══════════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════════
-
-const WEDDING_DATE = '2026-08-09';
-
-// time = "HH:MM" or "NTB" or null for no-time items
-// timeEnd = optional end time
-// secret = boolean (verrassing voor gasten)
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
 const PHASES = [
   {
-    id: 'vrijdag',
-    label: 'Vrijdag',
-    emoji: '🌙',
-    date: '2026-08-08',
-    items: [
-      { id:'v1', time:null, who:'Bruid + Sarah & Laura', what:'Overnachting kamer 1: Danique, Sarah, Laura', loc:'Shanghai Hotel, Delft' },
-      { id:'v2', time:null, who:'Bruidegom + Melvin & Niels', what:'Overnachting kamer 2: Rens, Niels, Melvin', loc:'Shanghai Hotel, Delft' },
+    id:'vrijdag', label:'Vrijdag avond', emoji:'🌙', date:'2026-08-08',
+    items:[
+      {id:'v1', time:null, who:'Danique, Sarah & Laura', what:'Overnachting kamer 1', loc:'Shanghai Hotel, Delft'},
+      {id:'v2', time:null, who:'Rens, Niels & Melvin', what:'Overnachting kamer 2', loc:'Shanghai Hotel, Delft'},
     ]
   },
   {
-    id: 'ochtend',
-    label: 'Ochtend',
-    emoji: '☀️',
-    date: '2026-08-09',
-    items: [
-      { id:'o1',  time:'07:30', who:'Mirjam (MUA 1)', what:'Aankomst en opbouw in hotelkamer', loc:'Shanghai Hotel, Delft' },
-      { id:'o2',  time:'07:30', who:'Lianne (MUA 2)', what:'Aankomst hotel', loc:'Shanghai Hotel, Delft' },
-      { id:'o3',  time:'07:45', timeEnd:'08:00', who:'Lianne (MUA 2)', what:'Opbouw in hotelkamer', loc:'Shanghai Hotel, Delft' },
-      { id:'o4',  time:'07:45', timeEnd:'09:00', who:'Laura (schoonzus)', what:'Haar & make-up door Mirjam', loc:'Shanghai Hotel, Delft' },
-      { id:'o5',  time:'08:00', who:'Kelly (fotograaf 1)', what:'Aankomst hotel', loc:'Shanghai Hotel, Delft' },
-      { id:'o6',  time:'08:00', who:'Jordi (fotograaf 2)', what:'Aankomst hotel', loc:'Shanghai Hotel, Delft' },
-      { id:'o7',  time:'08:00', timeEnd:'10:30', who:'Danique (bruid)', what:'Haar & make-up door Lianne', loc:'Shanghai Hotel, Delft' },
-      { id:'o8',  time:'09:15', timeEnd:'10:30', who:'Carmen (bruidsmeisje) + Yvo (getuige)', what:'Haar & make-up door Mirjam + Yvo arriveert', loc:'Shanghai Hotel, Delft' },
-      { id:'o9',  time:'10:30', who:'Carmen + Yvo', what:'Vertrek naar huis (na make-up & foto\'s)', loc:'Shanghai Hotel, Delft' },
-      { id:'o10', time:'10:30', timeEnd:'11:15', who:'Wendy (moeder bruid)', what:'Haar & make-up door Lianne', loc:'Shanghai Hotel, Delft' },
-      { id:'o11', time:'11:15', who:'Wendy (moeder bruid)', what:'Vertrek naar huis (na make-up & foto\'s)', loc:'Shanghai Hotel, Delft' },
-      { id:'o12', time:'10:45', timeEnd:'12:00', who:'Daniëlle (ceremoniemeester)', what:'Haar & make-up door Mirjam', loc:'Shanghai Hotel, Delft' },
-      { id:'o13', time:'11:15', timeEnd:'12:00', who:'Sarah (bruidsmeisje 1)', what:'Haar & make-up door Lianne', loc:'Shanghai Hotel, Delft' },
-      { id:'o14', time:'12:00', timeEnd:'12:15', who:'Mirjam (MUA 1)', what:'Afbouwen en vertrek', loc:'Shanghai Hotel, Delft' },
-      { id:'o15', time:'12:00', timeEnd:'12:15', who:'Lianne (MUA 2)', what:'Afbouwen en vertrek', loc:'Shanghai Hotel, Delft' },
-      { id:'o16', time:null, who:'Marcus (vader bruid)', what:'Trouwauto afleveren bij hotel — tijdstip NTB', loc:'Shanghai Hotel, Delft' },
-      { id:'o17', time:null, who:'Het Bloemenhart (bloemist)', what:'Aflevering bruidsboeket + corsages — tijdstip NTB', loc:'Shanghai Hotel, Delft' },
-      { id:'o18', time:'12:00', who:'Rens (bruidegom) + Jordi', what:'Vertrek hotel richting fotoshootlocatie (trouwauto)', loc:'Shanghai Hotel, Delft' },
-      { id:'o19', time:'12:15', who:'Danique (bruid) + Kelly', what:'Vertrek hotel richting fotoshootlocatie (apart)', loc:'Shanghai Hotel, Delft' },
+    id:'ochtend', label:'Ochtend', emoji:'☀️', date:'2026-08-09',
+    items:[
+      {id:'o1',  time:'07:30', who:'Mirjam (MUA 1)',                  what:'Aankomst & opbouw hotelkamer',                     loc:'Shanghai Hotel, Delft'},
+      {id:'o2',  time:'07:30', who:'Lianne (MUA 2)',                  what:'Aankomst hotel',                                   loc:'Shanghai Hotel, Delft'},
+      {id:'o3',  time:'07:45', timeEnd:'08:00', who:'Lianne (MUA 2)', what:'Opbouw in hotelkamer',                             loc:'Shanghai Hotel, Delft'},
+      {id:'o4',  time:'07:45', timeEnd:'09:00', who:'Laura (schoonzus)', what:'Haar & make-up door Mirjam',                   loc:'Shanghai Hotel, Delft'},
+      {id:'o5',  time:'08:00', who:'Kelly (fotograaf 1)',              what:'Aankomst hotel',                                  loc:'Shanghai Hotel, Delft'},
+      {id:'o6',  time:'08:00', who:'Jordi (fotograaf 2)',              what:'Aankomst hotel',                                  loc:'Shanghai Hotel, Delft'},
+      {id:'o7',  time:'08:00', timeEnd:'10:30', who:'Danique (bruid)', what:'Haar & make-up door Lianne',                    loc:'Shanghai Hotel, Delft'},
+      {id:'o8',  time:'09:15', timeEnd:'10:30', who:'Carmen & Yvo',   what:'Haar & make-up Mirjam · Yvo arriveert',          loc:'Shanghai Hotel, Delft'},
+      {id:'o9',  time:'10:30', who:'Carmen & Yvo',                    what:'Vertrek naar huis (na make-up & foto\'s)',        loc:'Shanghai Hotel, Delft'},
+      {id:'o10', time:'10:30', timeEnd:'11:15', who:'Wendy (moeder bruid)', what:'Haar & make-up door Lianne',               loc:'Shanghai Hotel, Delft'},
+      {id:'o11', time:'11:15', who:'Wendy (moeder bruid)',            what:'Vertrek naar huis',                               loc:'Shanghai Hotel, Delft'},
+      {id:'o12', time:'10:45', timeEnd:'12:00', who:'Daniëlle (ceremoniemeester)', what:'Haar & make-up door Mirjam',        loc:'Shanghai Hotel, Delft'},
+      {id:'o13', time:'11:15', timeEnd:'12:00', who:'Sarah (bruidsmeisje 1)', what:'Haar & make-up door Lianne',            loc:'Shanghai Hotel, Delft'},
+      {id:'o14', time:'12:00', timeEnd:'12:15', who:'Mirjam (MUA 1)', what:'Afbouwen & vertrek',                            loc:'Shanghai Hotel, Delft'},
+      {id:'o15', time:'12:00', timeEnd:'12:15', who:'Lianne (MUA 2)', what:'Afbouwen & vertrek',                            loc:'Shanghai Hotel, Delft'},
+      {id:'o16', time:null, who:'Marcus (vader bruid)',               what:'Trouwauto afleveren — tijdstip NTB (voor 12:00)', loc:'Shanghai Hotel, Delft'},
+      {id:'o17', time:null, who:'Het Bloemenhart (bloemist)',         what:'Aflevering boeket & corsages — tijdstip NTB',    loc:'Shanghai Hotel, Delft'},
+      {id:'o18', time:'12:00', who:'Rens & Jordi',                   what:'Vertrek hotel → fotoshootlocatie (trouwauto)',    loc:'Shanghai Hotel, Delft'},
+      {id:'o19', time:'12:15', who:'Danique & Kelly',                what:'Vertrek hotel → fotoshootlocatie (apart)',        loc:'Shanghai Hotel, Delft'},
     ]
   },
   {
-    id: 'fotoshoot',
-    label: 'Fotoshoot',
-    emoji: '📸',
-    date: '2026-08-09',
-    items: [
-      { id:'f1', time:'12:30', who:'Rens + Danique + Kelly + Jordi', what:'Aankomst fotoshootlocatie', loc:'Locatie nader te bepalen' },
-      { id:'f2', time:'12:30', who:'Sascha (zus Rens) + Billie (dochter)', what:'Aankomst bij fotoshootlocatie', loc:'Locatie nader te bepalen' },
-      { id:'f3', time:'12:30', timeEnd:'13:30', who:'Rens, Danique & Billie', what:'Familiefotoshoot', loc:'Locatie nader te bepalen' },
-      { id:'f4', time:'13:30', who:'Sascha + Billie', what:'Vertrek richting Hoeve Zzamen', loc:'→ Hoeve Zzamen, Zoetermeer' },
-      { id:'f5', time:'13:30', who:'Rens + Danique', what:'Uitspreken geloftes (privé) 💕', loc:'Locatie nader te bepalen' },
-      { id:'f6', time:'14:00', who:'Rens + Danique + fotografen', what:'Vertrek richting Hoeve Zzamen (trouwauto)', loc:'→ Hoeve Zzamen, Zoetermeer' },
+    id:'fotoshoot', label:'Fotoshoot', emoji:'📸', date:'2026-08-09',
+    items:[
+      {id:'f1', time:'12:30', who:'Rens, Danique, Kelly & Jordi',    what:'Aankomst fotoshootlocatie',      loc:'Locatie nader te bepalen'},
+      {id:'f2', time:'12:30', who:'Sascha & Billie',                 what:'Aankomst bij fotoshootlocatie',  loc:'Locatie nader te bepalen'},
+      {id:'f3', time:'12:30', timeEnd:'13:30', who:'Rens, Danique & Billie', what:'Familiefotoshoot',     loc:'Locatie nader te bepalen'},
+      {id:'f4', time:'13:30', who:'Sascha & Billie',                 what:'Vertrek → Hoeve Zzamen',         loc:'→ Hoeve Zzamen, Zoetermeer'},
+      {id:'f5', time:'13:30', who:'Rens & Danique',                  what:'Uitspreken geloftes (privé) 💕', loc:'Locatie nader te bepalen'},
+      {id:'f6', time:'14:00', who:'Rens, Danique & fotografen',      what:'Vertrek → Hoeve Zzamen (trouwauto)', loc:'→ Hoeve Zzamen, Zoetermeer'},
     ]
   },
   {
-    id: 'opbouw',
-    label: 'Opbouw',
-    emoji: '🏚️',
-    date: '2026-08-09',
-    items: [
-      { id:'op1', time:'13:00', who:'Daniëlle, Melvin, Laura, Niels, Sarah', what:'Aankomst Hoeve Zzamen voor opbouw', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'op2', time:null, who:'Feestopbouwbedrijf (naam NTB)', what:'Aankomst en opbouw feest — tijdstip NTB', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'op3', time:'14:00', timeEnd:'14:30', who:'Rens + Danique', what:'Aankomst Hoeve Zzamen', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'op4', time:'14:30', who:'Marcus (vader bruid)', what:'Aankomst melkhuisje voor firstlook', loc:'Melkhuisje, Hoeve Zzamen' },
-      { id:'op5', time:'14:30', timeEnd:'15:00', who:'Sulaika (BABS)', what:'Aankomst trouwlocatie', loc:'Hoeve Zzamen, Zoetermeer' },
+    id:'opbouw', label:'Opbouw', emoji:'🏡', date:'2026-08-09',
+    items:[
+      {id:'op1', time:'13:00', who:'Daniëlle, Melvin, Laura, Niels & Sarah', what:'Aankomst voor opbouw', loc:'Hoeve Zzamen, Zoetermeer'},
+      {id:'op2', time:null,    who:'Feestopbouwbedrijf (naam NTB)',  what:'Aankomst & opbouw feest — tijdstip NTB',     loc:'Hoeve Zzamen, Zoetermeer'},
+      {id:'op3', time:'14:00', timeEnd:'14:30', who:'Rens & Danique', what:'Aankomst Hoeve Zzamen',                   loc:'Hoeve Zzamen, Zoetermeer'},
+      {id:'op4', time:'14:30', who:'Marcus (vader bruid)',             what:'Aankomst melkhuisje — firstlook',         loc:'Melkhuisje, Hoeve Zzamen'},
+      {id:'op5', time:'14:30', timeEnd:'15:00', who:'Sulaika (BABS)', what:'Aankomst trouwlocatie',                   loc:'Hoeve Zzamen, Zoetermeer'},
     ]
   },
   {
-    id: 'programma',
-    label: 'Programma',
-    emoji: '💒',
-    date: '2026-08-09',
-    items: [
-      { id:'p1',  time:'15:00', timeEnd:'15:30', who:'Alle gasten', what:'Inloop gasten', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p2',  time:'15:30', timeEnd:'16:00', who:'Alle aanwezigen', what:'Huwelijksceremonie (voltrokken door Sulaika BABS)', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p3',  time:'16:00', who:'Sulaika (BABS)', what:'Toost mee tijdens borrel, daarna vertrek', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p4',  time:'16:00', timeEnd:'18:00', who:'Alle gasten', what:'Borrel — 2 momenten voor speeches/surprises', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p5',  time:'18:00', who:'Billie + gast Lida', what:'Billie vertrekt met Lida naar huis', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p6',  time:'18:00', who:'Rens + Danique', what:'Openingsspeech door bruidspaar', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p7',  time:'18:00', timeEnd:'20:00', who:'Alle gasten', what:'Avondeten (BBQ)', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p8',  time:null, who:'Gasten', what:'3 momenten voor speeches/surprises tijdens diner', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p9',  time:'19:30', who:'Brassband', what:'⚠️ Heimelijke aankomst via melkhuisje — VERRASSING voor gasten!', loc:'Melkhuisje, Hoeve Zzamen', secret:true },
-      { id:'p10', time:'19:30', who:'Thomas (DJ) + Sjoerd (saxofonist)', what:'Aankomst en opbouw', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p11', time:'20:00', timeEnd:'00:00', who:'Alle gasten', what:'Feest! 🎉', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p12', time:'20:15', who:'Brassband + Rens + Danique', what:'⚠️ Brassband komt op MET bruidspaar — VERRASSING voor gasten!', loc:'Hoeve Zzamen, Zoetermeer', secret:true },
-      { id:'p13', time:null, who:'Gasten', what:'1 moment voor speeches/surprises tijdens feest', loc:'Hoeve Zzamen, Zoetermeer' },
-      { id:'p14', time:'00:00', who:'Alle gasten', what:'Einde feest — afsluiting nader te bepalen', loc:'Hoeve Zzamen, Zoetermeer' },
+    id:'programma', label:'Programma', emoji:'💒', date:'2026-08-09',
+    items:[
+      {id:'p1',  time:'15:00', timeEnd:'15:30', who:'Alle gasten',         what:'Inloop gasten',                                    loc:'Hoeve Zzamen'},
+      {id:'p2',  time:'15:30', timeEnd:'16:00', who:'Alle aanwezigen',     what:'Huwelijksceremonie · voltrokken door Sulaika (BABS)', loc:'Hoeve Zzamen'},
+      {id:'p3',  time:'16:00', who:'Sulaika (BABS)',                        what:'Toost mee tijdens borrel, daarna vertrek',          loc:'Hoeve Zzamen'},
+      {id:'p4',  time:'16:00', timeEnd:'18:00', who:'Alle gasten',         what:'Borrel · 2 momenten speeches/surprises',            loc:'Hoeve Zzamen'},
+      {id:'p5',  time:'18:00', who:'Billie & gast Lida',                   what:'Billie vertrekt met Lida naar huis',                loc:'Hoeve Zzamen'},
+      {id:'p6',  time:'18:00', who:'Rens & Danique',                       what:'Openingsspeech bruidspaar',                         loc:'Hoeve Zzamen'},
+      {id:'p7',  time:'18:00', timeEnd:'20:00', who:'Alle gasten',         what:'Avondeten (BBQ) · 3 momenten speeches tijdens diner', loc:'Hoeve Zzamen'},
+      {id:'p8',  time:'19:30', who:'Brassband',                            what:'Heimelijke aankomst via melkhuisje', loc:'Melkhuisje, Hoeve Zzamen', secret:true},
+      {id:'p9',  time:'19:30', who:'Thomas (DJ) & Sjoerd (saxofonist)',    what:'Aankomst & opbouw',                                 loc:'Hoeve Zzamen'},
+      {id:'p10', time:'20:00', timeEnd:'00:00', who:'Alle gasten',         what:'Feest! 🎉',                                         loc:'Hoeve Zzamen'},
+      {id:'p11', time:'20:15', who:'Brassband + Rens & Danique',           what:'Brassband komt op met bruidspaar', loc:'Hoeve Zzamen', secret:true},
+      {id:'p12', time:null,    who:'Gasten',                               what:'1 moment voor speeches/surprises tijdens feest',    loc:'Hoeve Zzamen'},
+      {id:'p13', time:'00:00', who:'Alle gasten',                          what:'Einde feest — afsluiting nader te bepalen',         loc:'Hoeve Zzamen'},
     ]
   }
 ];
 
 const CONTACTS = [
-  { name:'Kelly', role:'Fotograaf 1', note:'Aanwezig vanaf 08:00 hotel, gehele dag', initials:'KE' },
-  { name:'Jordi', role:'Fotograaf 2', note:'Aanwezig vanaf 08:00 hotel, gehele dag', initials:'JO' },
-  { name:'Mirjam', role:'Make-up artist 1 (MUA)', note:'Aanwezig 07:30 – 12:15, hotel', initials:'MI' },
-  { name:'Lianne', role:'Make-up artist 2 (MUA)', note:'Aanwezig 07:30 – 12:15, hotel', initials:'LI' },
-  { name:'Sulaika', role:'BABS (Burgerlijk Ambtenaar)', note:'Aanwezig 14:30 – ca. 16:30', initials:'SU' },
-  { name:'Daniëlle', role:'Ceremoniemeester', note:'Aanwezig vanaf 13:00', initials:'DA' },
-  { name:'Marcus', role:'Vader bruid — trouwauto', note:'Tijdstip aflevering NTB (voor 12:00)', initials:'MA' },
-  { name:'Het Bloemenhart', role:'Bloemist, Berkel en Rodenrijs', note:'Aflevering boeket + corsages hotel, tijdstip NTB', initials:'🌸' },
-  { name:'Thomas', role:'DJ', note:'Aankomst ca. 19:30', initials:'TH' },
-  { name:'Sjoerd', role:'Saxofonist', note:'Aankomst ca. 19:30', initials:'SJ' },
-  { name:'Brassband', role:'Verrassing voor gasten!', note:'Aankomst 19:30 via melkhuisje, opkomst 20:15', initials:'🎺' },
-  { name:'Feestopbouwbedrijf', role:'Opbouw feestzaal', note:'Naam + tijdstip nader te bepalen', initials:'🏗️' },
+  {initials:'KJ', name:'Kelly & Jordi', role:'Fotografen', note:'Aanwezig vanaf 08:00 hotel · gehele dag'},
+  {initials:'ML', name:'Mirjam & Lianne', role:'Make-up artists (MUA)', note:'Aanwezig 07:30 – 12:15, hotel'},
+  {initials:'SU', name:'Sulaika', role:'BABS (Burgerlijk Ambtenaar)', note:'Aanwezig 14:30 – ca. 16:30'},
+  {initials:'DL', name:'Daniëlle', role:'Ceremoniemeester', note:'Aanwezig vanaf 13:00'},
+  {initials:'MA', name:'Marcus', role:'Vader bruid · trouwauto', note:'Aflevering voor 12:00 — tijdstip NTB'},
+  {initials:'🌸', name:'Het Bloemenhart', role:'Bloemist, Berkel en Rodenrijs', note:'Aflevering boeket + corsages hotel · tijdstip NTB'},
+  {initials:'TS', name:'Thomas & Sjoerd', role:'DJ & Saxofonist', note:'Aankomst ca. 19:30'},
+  {initials:'🎺', name:'Brassband', role:'Verrassing voor gasten!', note:'Aankomst 19:30 via melkhuisje · opkomst 20:15'},
+  {initials:'🏗️', name:'Feestopbouwbedrijf', role:'Opbouw feestzaal', note:'Naam + tijdstip nader te bepalen'},
 ];
 
 const CORSAGES = [
-  { name:'Rens', role:'Bruidegom', id:'c-rens' },
-  { name:'Yvo', role:'Getuige bruidegom 1', id:'c-yvo' },
-  { name:'Niels', role:'Beste vriend bruidegom', id:'c-niels' },
-  { name:'Melvin', role:'Getuige bruidegom 2', id:'c-melvin' },
-  { name:'Sarah', role:'Bruidsmeisje 1', id:'c-sarah' },
-  { name:'Carmen', role:'Bruidsmeisje 2', id:'c-carmen' },
-  { name:'Opa Ton', role:'Getuige bruid 1', id:'c-ton' },
-  { name:'Oma Willie', role:'Getuige bruid 2', id:'c-willie' },
-  { name:'Billie', role:'Dochter bruidspaar', id:'c-billie' },
-  { name:'Sascha', role:'Zus van Rens', id:'c-sascha' },
-  { name:'Daniëlle', role:'Ceremoniemeester', id:'c-danielle' },
+  {id:'c1', name:'Rens',       role:'Bruidegom'},
+  {id:'c2', name:'Yvo',        role:'Getuige bruidegom 1'},
+  {id:'c3', name:'Niels',      role:'Beste vriend bruidegom'},
+  {id:'c4', name:'Melvin',     role:'Getuige bruidegom 2'},
+  {id:'c5', name:'Sarah',      role:'Bruidsmeisje 1'},
+  {id:'c6', name:'Carmen',     role:'Bruidsmeisje 2'},
+  {id:'c7', name:'Opa Ton',    role:'Getuige bruid 1'},
+  {id:'c8', name:'Oma Willie', role:'Getuige bruid 2'},
+  {id:'c9', name:'Billie',     role:'Dochter bruidspaar'},
+  {id:'c10',name:'Sascha',     role:'Zus van Rens'},
+  {id:'c11',name:'Daniëlle',   role:'Ceremoniemeester'},
 ];
 
 const OPEN_PUNTEN = [
-  'Locatie fotoshoot en geloftes: nader te bepalen',
-  'Tijdstip aflevering trouwauto door Marcus: nader te bepalen (moet voor 12:00 aanwezig zijn)',
-  'Tijdstip aflevering bruidsboeket + corsages door Het Bloemenhart: nader te bepalen',
+  'Locatie fotoshoot & geloftes: nader te bepalen',
+  'Tijdstip aflevering trouwauto door Marcus (moet voor 12:00 aanwezig zijn)',
+  'Tijdstip aflevering bruidsboeket & corsages door Het Bloemenhart',
   'Naam feestopbouwbedrijf + aankomsttijd: nader te bepalen',
   'Eindmoment feest (last dance / uitzwaai): nader te bepalen',
-  'Verantwoordelijkheden per moment: nader in te vullen in draaiboek',
+  'Verantwoordelijkheden per moment: nader in te vullen',
 ];
 
-// ═══════════════════════════════════════════════
-//  STATE (persisted in localStorage)
-// ═══════════════════════════════════════════════
-
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
 function loadState() {
-  try { return JSON.parse(localStorage.getItem('bruiloft_state') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem('dr_state26') || '{}'); } catch { return {}; }
 }
-function saveState() {
-  localStorage.setItem('bruiloft_state', JSON.stringify(state));
-}
+let S = loadState();
+if (!S.done)      S.done = {};
+if (!S.notes)     S.notes = {};
+if (!S.corsages)  S.corsages = {};
+if (!S.expanded)  S.expanded = {};
+if (!S.phase)     S.phase = PHASES[0].id;
 
-let state = loadState();
-// state.done = { itemId: true/false }
-// state.notes = { itemId: 'text' }
-// state.corsages = { corsageId: true/false }
-// state.activePhase = phaseId
-// state.openExpanded = { itemId: true }
+function save() { localStorage.setItem('dr_state26', JSON.stringify(S)); }
 
-if (!state.done) state.done = {};
-if (!state.notes) state.notes = {};
-if (!state.corsages) state.corsages = {};
-if (!state.openExpanded) state.openExpanded = {};
-
-// ═══════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════
-
-function parseTime(timeStr, dateStr) {
-  if (!timeStr || timeStr === 'NTB') return null;
-  const [h, m] = timeStr.split(':').map(Number);
+/* ═══════════════════════════════════════════════
+   TIME HELPERS
+═══════════════════════════════════════════════ */
+function toDate(timeStr, dateStr) {
+  if (!timeStr) return null;
+  const [h,m] = timeStr.split(':').map(Number);
   const d = new Date(dateStr);
   d.setHours(h, m, 0, 0);
   return d;
 }
 
-function nowMs() { return Date.now(); }
-
-function diffMinutes(target) {
-  return Math.round((target.getTime() - nowMs()) / 60000);
+function minsUntil(dt) {
+  return Math.round((dt.getTime() - Date.now()) / 60000);
 }
 
-function formatCountdown(minutes) {
-  if (minutes <= 0) {
-    const abs = Math.abs(minutes);
-    if (abs < 60) return `${abs}m te laat`;
-    return `${Math.floor(abs/60)}u ${abs%60}m te laat`;
-  }
-  if (minutes < 60) return `over ${minutes}m`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `over ${h}u${m > 0 ? ' ' + m + 'm' : ''}`;
+function fmtCountdown(mins) {
+  const abs = Math.abs(mins);
+  const h = Math.floor(abs / 60), m = abs % 60;
+  const hm = h > 0 ? `${h}u${m > 0 ? m+'m' : ''}` : `${m}m`;
+  return mins >= 0 ? [hm, 'nog'] : [hm, 'te laat'];
 }
 
-function countdownClass(minutes, isDone) {
-  if (isDone) return 'done';
-  if (minutes === null) return 'no-time';
-  if (minutes < 0) return 'overdue';
-  if (minutes <= 30) return 'soon';
+function chipState(mins, done) {
+  if (done) return 'done';
+  if (mins === null) return 'none';
+  if (mins < 0) return 'late';
+  if (mins <= 30) return 'soon';
   return 'future';
 }
 
-function cardClass(minutes, isDone, isSecret) {
-  let cls = 'item-card';
-  if (isDone) return cls + ' done';
-  if (isSecret) cls += ' secret';
-  if (minutes !== null && minutes < 0) cls += ' overdue';
-  else if (minutes !== null && minutes <= 30) cls += ' warning';
-  return cls;
+function cardState(mins, done, secret) {
+  if (done)   return 'is-done';
+  if (secret) return 'is-secret';
+  if (mins !== null && mins < 0)  return 'is-late';
+  if (mins !== null && mins <= 30) return 'is-soon';
+  return '';
 }
 
-function totalItems() {
-  return PHASES.reduce((s, p) => s + p.items.length, 0);
-}
-function doneCount() {
-  return Object.values(state.done).filter(Boolean).length;
-}
-
-// ═══════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════
-
-let activePhase = state.activePhase || PHASES[0].id;
-let activeView = 'draaiboek';
-
-function showView(view) {
-  activeView = view;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('nav-' + view).classList.add('active');
-  if (view === 'contacten') renderContacts();
-  if (view === 'corsages') renderCorsages();
-  if (view === 'punten') renderPunten();
-}
-
+/* ═══════════════════════════════════════════════
+   RENDER — PHASE TABS
+═══════════════════════════════════════════════ */
 function renderTabs() {
-  const tabs = document.getElementById('phaseTabs');
-  tabs.innerHTML = PHASES.map(p => {
+  const strip = document.getElementById('tabStrip');
+  strip.innerHTML = PHASES.map(p => {
     const total = p.items.length;
-    const done = p.items.filter(i => state.done[i.id]).length;
-    return `<button class="tab-btn ${p.id === activePhase ? 'active' : ''}" onclick="switchPhase('${p.id}')">
-      ${p.emoji} ${p.label}<span class="badge">${done}/${total}</span>
+    const done  = p.items.filter(i => S.done[i.id]).length;
+    return `<button class="tab-pill ${p.id === S.phase ? 'active' : ''}"
+      onclick="switchPhase('${p.id}')">
+      ${p.emoji} ${p.label}
+      <span class="pill-count">${done}/${total}</span>
     </button>`;
   }).join('');
 }
 
+/* ═══════════════════════════════════════════════
+   RENDER — PHASE ITEMS
+═══════════════════════════════════════════════ */
 function renderPhase() {
-  const phase = PHASES.find(p => p.id === activePhase);
-  const content = document.getElementById('mainContent');
+  const phase = PHASES.find(p => p.id === S.phase);
   if (!phase) return;
 
-  const items = phase.items.map(item => {
-    const isDone = !!state.done[item.id];
-    const targetTime = item.time ? parseTime(item.time, phase.date) : null;
-    const minutes = targetTime ? diffMinutes(targetTime) : null;
-    const cdClass = countdownClass(minutes, isDone);
-    const cdText = isDone ? '✓' : (minutes !== null ? formatCountdown(minutes) : '');
-    const cls = cardClass(minutes, isDone, item.secret);
-    const isOpen = !!state.openExpanded[item.id];
-    const notes = state.notes[item.id] || '';
+  // find next unchecked timed item for banner
+  const now = new Date();
+  let nextItem = null, nextPhase = null;
+  for (const ph of PHASES) {
+    for (const it of ph.items) {
+      if (S.done[it.id] || !it.time) continue;
+      const dt = toDate(it.time, ph.date);
+      if (dt > now) { nextItem = it; nextPhase = ph; break; }
+    }
+    if (nextItem) break;
+  }
 
-    const timeLabel = item.time
-      ? (item.timeEnd ? `${item.time} – ${item.timeEnd}` : item.time)
-      : (item.what.includes('NTB') ? '' : '');
-
-    return `<div class="${cls}" id="card-${item.id}">
-      <div class="card-main" onclick="toggleExpand('${item.id}')">
-        <button class="check-btn" onclick="toggleDone(event,'${item.id}')">${isDone ? '✓' : ''}</button>
-        <div class="card-body">
-          ${timeLabel ? `<div class="item-time">${timeLabel}</div>` : ''}
-          <div class="item-what">${item.what}</div>
-          <div class="item-who">${item.who}</div>
-          <div class="item-loc">${item.loc}</div>
-          ${item.secret ? '<span class="secret-badge">🎺 VERRASSING</span>' : ''}
-        </div>
-        <div class="countdown-chip ${cdClass}">${cdText}</div>
+  let bannerHtml = '';
+  if (nextItem) {
+    const dt = toDate(nextItem.time, nextPhase.date);
+    const mins = minsUntil(dt);
+    const [val, unit] = fmtCountdown(mins);
+    bannerHtml = `<div class="next-banner">
+      <div class="next-banner-icon">⏭️</div>
+      <div class="next-banner-body">
+        <div class="next-banner-label">Volgende activiteit</div>
+        <div class="next-banner-what">${nextItem.what}</div>
       </div>
-      <div class="card-details ${isOpen ? 'open' : ''}" id="details-${item.id}">
-        <div class="notes-label">Notities</div>
-        <textarea class="notes-area" placeholder="Voeg een notitie toe…" oninput="saveNote('${item.id}',this.value)">${notes}</textarea>
+      <div class="next-banner-time">${val} ${unit}</div>
+    </div>`;
+  }
+
+  const cards = phase.items.map(item => {
+    const done   = !!S.done[item.id];
+    const dt     = item.time ? toDate(item.time, phase.date) : null;
+    const mins   = dt ? minsUntil(dt) : null;
+    const cs     = chipState(mins, done);
+    const cls    = cardState(mins, done, item.secret);
+    const isOpen = !!S.expanded[item.id];
+    const notes  = S.notes[item.id] || '';
+    const timeLbl = item.time
+      ? (item.timeEnd ? `${item.time} – ${item.timeEnd}` : item.time)
+      : '';
+
+    let chipHtml = '';
+    if (cs !== 'none') {
+      if (cs === 'done') {
+        chipHtml = `<div class="cd-chip state-done"><div class="cd-number">✓</div><div class="cd-unit">klaar</div></div>`;
+      } else {
+        const [val, unit] = fmtCountdown(mins);
+        chipHtml = `<div class="cd-chip state-${cs}"><div class="cd-number">${val}</div><div class="cd-unit">${unit}</div></div>`;
+      }
+    }
+
+    return `<div class="item-wrap">
+      <div class="item-card ${cls}" id="card-${item.id}">
+        <div class="item-main" onclick="toggleExpand('${item.id}')">
+          <button class="check-circle ${done ? 'checked' : ''}"
+            onclick="toggleDone(event,'${item.id}')">
+            <span class="check-icon">✓</span>
+          </button>
+          <div class="item-body">
+            ${timeLbl || item.secret ? `<div class="item-time-row">
+              ${timeLbl ? `<span class="item-time">${timeLbl}</span>` : ''}
+              ${item.secret ? `<span class="badge-secret">🎺 Verrassing</span>` : ''}
+            </div>` : ''}
+            <div class="item-what">${item.what}</div>
+            <div class="item-who">${item.who}</div>
+            <div class="item-loc">📍 ${item.loc}</div>
+          </div>
+          ${chipHtml}
+        </div>
+        <div class="item-expand ${isOpen ? 'open' : ''}" id="exp-${item.id}">
+          <div class="expand-inner">
+            <div class="notes-label">Notitie</div>
+            <textarea class="notes" placeholder="Voeg een notitie toe…"
+              oninput="saveNote('${item.id}',this.value)">${notes}</textarea>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
 
-  content.innerHTML = `<div class="phase-title">${phase.emoji} ${phase.label}</div>${items}`;
+  document.getElementById('phaseContent').innerHTML =
+    `<div class="section-label">${phase.emoji} ${phase.label}</div>${bannerHtml}${cards}`;
 }
 
+/* ═══════════════════════════════════════════════
+   RENDER — CONTACTS
+═══════════════════════════════════════════════ */
+function renderContacts() {
+  document.getElementById('contactList').innerHTML = CONTACTS.map(c => `
+    <div class="contact-card">
+      <div class="c-avatar">${c.initials}</div>
+      <div class="c-body">
+        <div class="c-name">${c.name}</div>
+        <div class="c-role">${c.role}</div>
+        <div class="c-note">${c.note}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER — CORSAGES
+═══════════════════════════════════════════════ */
+function renderCorsages() {
+  document.getElementById('corsageList').innerHTML = CORSAGES.map(c => {
+    const done = !!S.corsages[c.id];
+    return `<div class="corsage-row ${done ? 'done' : ''}" id="cor-${c.id}">
+      <div>
+        <div class="cor-name">${c.name}</div>
+        <div class="cor-role">${c.role}</div>
+      </div>
+      <button class="cor-btn ${done ? 'done' : ''}" onclick="toggleCorsage('${c.id}')">
+        <span class="cor-btn-icon">✓</span>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER — OPEN PUNTEN
+═══════════════════════════════════════════════ */
+function renderPunten() {
+  document.getElementById('puntenList').innerHTML = OPEN_PUNTEN.map(p =>
+    `<div class="punt-card"><span class="punt-icon">⚠️</span>${p}</div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════ */
+function updateProgress() {
+  const total = PHASES.reduce((s,p) => s + p.items.length, 0);
+  const done  = Object.values(S.done).filter(Boolean).length;
+  const pct   = total > 0 ? (done / total * 100).toFixed(0) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / ${total}`;
+}
+
+/* ═══════════════════════════════════════════════
+   INTERACTIONS
+═══════════════════════════════════════════════ */
 function switchPhase(id) {
-  activePhase = id;
-  state.activePhase = id;
-  saveState();
+  S.phase = id;
+  save();
   renderTabs();
   renderPhase();
 }
 
-function toggleDone(event, id) {
-  event.stopPropagation();
-  state.done[id] = !state.done[id];
-  saveState();
+function toggleDone(e, id) {
+  e.stopPropagation();
+  S.done[id] = !S.done[id];
+  save();
+  if (S.done[id]) spawnConfetti(e);
   renderTabs();
   renderPhase();
   updateProgress();
 }
 
 function toggleExpand(id) {
-  state.openExpanded[id] = !state.openExpanded[id];
-  saveState();
-  const details = document.getElementById('details-' + id);
-  if (details) details.classList.toggle('open', !!state.openExpanded[id]);
+  S.expanded[id] = !S.expanded[id];
+  save();
+  const el = document.getElementById('exp-' + id);
+  if (el) el.classList.toggle('open', !!S.expanded[id]);
 }
 
 function saveNote(id, text) {
-  state.notes[id] = text;
-  saveState();
+  S.notes[id] = text;
+  save();
 }
 
-function updateProgress() {
-  const total = totalItems();
-  const done = doneCount();
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = `${done} van ${total} items afgevinkt (${pct}%)`;
+function toggleCorsage(id) {
+  S.corsages[id] = !S.corsages[id];
+  save();
+  const row = document.getElementById('cor-' + id);
+  const btn = row.querySelector('.cor-btn');
+  row.classList.toggle('done', !!S.corsages[id]);
+  btn.classList.toggle('done', !!S.corsages[id]);
 }
 
-function renderContacts() {
-  document.getElementById('contactsGrid').innerHTML = CONTACTS.map(c => `
-    <div class="contact-card">
-      <div class="contact-avatar">${c.initials}</div>
-      <div class="contact-info">
-        <div class="contact-name">${c.name}</div>
-        <div class="contact-role">${c.role}</div>
-        <div class="contact-note">${c.note}</div>
-      </div>
-    </div>`).join('');
+/* ═══════════════════════════════════════════════
+   VIEWS
+═══════════════════════════════════════════════ */
+let activeView = 'draaiboek';
+function showView(v) {
+  activeView = v;
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + v).classList.add('active');
+  if (v === 'contacten') renderContacts();
+  if (v === 'corsages')  renderCorsages();
+  if (v === 'punten')    renderPunten();
 }
 
-function renderCorsages() {
-  document.getElementById('corsagesList').innerHTML = CORSAGES.map(c => {
-    const checked = !!state.corsages[c.id];
-    return `<div class="corsage-card">
-      <div class="corsage-info">
-        <div class="name">${c.name}</div>
-        <div class="role">${c.role}</div>
-      </div>
-      <button class="corsage-check ${checked ? 'checked' : ''}" onclick="toggleCorsage('${c.id}',this)">${checked ? '✓' : ''}</button>
-    </div>`;
-  }).join('');
+/* ═══════════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════════ */
+const CONF_COLORS = ['#c8737a','#c9a96e','#7a9e7e','#d4b0e0','#f5c0a0'];
+function spawnConfetti(e) {
+  const x = e.clientX || window.innerWidth / 2;
+  const y = e.clientY || window.innerHeight / 2;
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left:${x + (Math.random()-0.5)*60}px;
+      top:${y}px;
+      background:${CONF_COLORS[Math.floor(Math.random()*CONF_COLORS.length)]};
+      border-radius:${Math.random()>0.5?'50%':'3px'};
+      width:${6+Math.random()*6}px;
+      height:${6+Math.random()*6}px;
+      animation-duration:${0.8+Math.random()*0.6}s;
+      animation-delay:${Math.random()*0.15}s;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
 }
 
-function toggleCorsage(id, btn) {
-  state.corsages[id] = !state.corsages[id];
-  saveState();
-  btn.classList.toggle('checked', !!state.corsages[id]);
-  btn.textContent = state.corsages[id] ? '✓' : '';
-}
-
-function renderPunten() {
-  document.getElementById('openPuntenList').innerHTML = OPEN_PUNTEN.map(p =>
-    `<div class="open-item">${p}</div>`).join('');
-}
-
-// ═══════════════════════════════════════════════
-//  CLOCK & AUTO-REFRESH
-// ═══════════════════════════════════════════════
-
-function updateClock() {
+/* ═══════════════════════════════════════════════
+   CLOCK & TICK
+═══════════════════════════════════════════════ */
+function tick() {
   const now = new Date();
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent = h + ':' + m;
-}
-
-function tick() {
-  updateClock();
-  updateProgress();
+  document.getElementById('liveClock').textContent = h + ':' + m;
   if (activeView === 'draaiboek') renderPhase();
+  updateProgress();
 }
 
-// ═══════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════
-
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
 renderTabs();
 renderPhase();
 updateProgress();
-updateClock();
-setInterval(tick, 30000); // refresh every 30 seconds
+tick();
+setInterval(tick, 30000);
 </script>
 </body>
 </html>

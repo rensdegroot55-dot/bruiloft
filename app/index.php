@@ -127,7 +127,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
    ═══════════════════════════════════════════════ */
 .sticky-head{position:sticky;top:0;z-index:200}
 .hero{
-  will-change:transform;
   /* Tall state */
   background:linear-gradient(160deg,#1e1510 0%,#3a2414 55%,#2a1c12 100%);
   padding-top:env(safe-area-inset-top,0);
@@ -229,7 +228,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
   will-change:background;
   transition:background 90s linear;
 }
-body>*:not(#ambientOrb){position:relative;z-index:1}
+.content,.static-view{position:relative;z-index:1}
 
 /* ── LIVE TICKER ── */
 .ticker{

@@ -207,9 +207,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 
 /* ── COMPACT (scrolled) ── */
 .hero.compact{
-  background:rgba(30,21,16,.78);
-  backdrop-filter:blur(22px) saturate(1.4);
-  -webkit-backdrop-filter:blur(22px) saturate(1.4);
+  background:rgba(30,21,16,.95);
   box-shadow:0 2px 24px rgba(0,0,0,.4);
 }
 .hero.compact .hero-inner{padding:8px 16px 6px}
@@ -225,7 +223,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
   position:fixed;top:-25vh;right:-25vw;
   width:90vmax;height:90vmax;border-radius:50%;
   pointer-events:none;z-index:0;opacity:.13;
-  will-change:background;
   transition:background 90s linear;
 }
 .content,.static-view{position:relative;z-index:1}
@@ -281,8 +278,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 
 .phase-strip{
   display:flex;overflow-x:auto;gap:6px;padding:9px 14px;
-  background:rgba(255,252,249,.95);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  background:rgba(255,252,249,.98);
   border-bottom:1px solid var(--border);
   -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
@@ -540,8 +536,7 @@ body{transition:background-color .55s ease}
 .bnav{
   position:fixed;bottom:0;left:0;right:0;
   display:flex;justify-content:space-around;
-  background:rgba(255,252,249,.95);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:rgba(255,252,249,.98);
   border-top:1px solid var(--border);
   padding:8px 0 max(10px,env(safe-area-inset-bottom));
   z-index:300;box-shadow:0 -4px 20px rgba(45,36,32,.08);
@@ -568,7 +563,7 @@ body{transition:background-color .55s ease}
 
 /* ── NOTITIE MODAL (gecentreerd) ── */
 .modal-bg{position:fixed;inset:0;background:rgba(45,36,32,.55);z-index:400;
-  opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(3px)}
+  opacity:0;pointer-events:none;transition:opacity .22s}
 .modal-bg.open{opacity:1;pointer-events:all}
 .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.95);
   width:min(92vw,400px);background:var(--surface);border-radius:20px;

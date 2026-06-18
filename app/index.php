@@ -566,9 +566,10 @@ body{transition:background-color .55s ease}
 .sheet-bg.open{opacity:1;pointer-events:all}
 .sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);
   border-radius:20px 20px 0 0;padding:0 18px max(24px,env(safe-area-inset-bottom));
-  z-index:401;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  box-shadow:0 -8px 40px rgba(45,36,32,.18)}
-.sheet.open{transform:translateY(0)}
+  z-index:401;transform:translateY(110%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1),visibility 0s .3s;
+  box-shadow:0 -8px 40px rgba(45,36,32,.18);visibility:hidden}
+.sheet.open{transform:translateY(0);visibility:visible;transition:transform .3s cubic-bezier(.4,0,.2,1),visibility 0s 0s}
 .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:12px auto 16px}
 .sheet-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
 textarea.sheet-note{width:100%;padding:11px 13px;font-family:'Inter',sans-serif;font-size:.88rem;
@@ -920,13 +921,10 @@ document.addEventListener('touchend',()=>{
       document.documentElement.style.setProperty('--header-h',h+'px');
     }
   }
-  // Initieel meten zodra DOM is geladen
+  // Meten zodra de hero van grootte verandert (ook na ticker-update)
   updateHeaderH();
+  new ResizeObserver(updateHeaderH).observe(hero);
   window.addEventListener('resize',updateHeaderH,{passive:true});
-  // Na CSS-transitie opnieuw meten
-  hero.addEventListener('transitionend',e=>{
-    if(e.propertyName==='padding'||e.propertyName==='font-size')updateHeaderH();
-  });
 
   window.addEventListener('scroll',()=>{
     const shouldCompact=window.scrollY>60;

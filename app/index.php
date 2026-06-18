@@ -300,8 +300,8 @@ body>*:not(#ambientOrb){position:relative;z-index:1}
 .phase-pill.has-alert .pc{background:var(--rose-light);color:var(--rose)}
 
 /* ── CONTENT ── */
-.content{padding:16px 16px max(120px, calc(var(--nav-h) + 56px))}
-.static-view{display:none;padding:16px 16px max(120px, calc(var(--nav-h) + 56px))}
+.content{padding:16px 16px calc(var(--nav-h) + 24px)}
+.static-view{display:none;padding:16px 16px calc(var(--nav-h) + 24px)}
 
 /* ═════════════════════════════════
    FASE-KLEUREN (theming per fase)
@@ -555,26 +555,43 @@ body{transition:background-color .55s ease}
 .nb.active .ni{transform:scale(1.18)}
 .nb-logout{text-decoration:none;color:var(--ink-faint)}
 
-/* ── NOTES SHEET ── */
-.sheet-bg{position:fixed;inset:0;background:rgba(45,36,32,.45);z-index:400;
-  opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
-.sheet-bg.open{opacity:1;pointer-events:all}
-.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);
-  border-radius:20px 20px 0 0;padding:0 18px max(24px,env(safe-area-inset-bottom));
-  z-index:401;transform:translateY(110%);
-  transition:transform .3s cubic-bezier(.4,0,.2,1),visibility 0s .3s;
-  box-shadow:0 -8px 40px rgba(45,36,32,.18);visibility:hidden}
-.sheet.open{transform:translateY(0);visibility:visible;transition:transform .3s cubic-bezier(.4,0,.2,1),visibility 0s 0s}
-.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:12px auto 16px}
-.sheet-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
-textarea.sheet-note{width:100%;padding:11px 13px;font-family:'Inter',sans-serif;font-size:.88rem;
+/* ── NOTITIE KNOP ── */
+.note-btn{
+  position:absolute;bottom:8px;right:8px;
+  width:26px;height:26px;border-radius:50%;border:none;
+  background:var(--gold-pale);color:var(--gold);
+  font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  opacity:.7;transition:opacity .15s,transform .15s;z-index:2;
+  -webkit-tap-highlight-color:transparent;
+}
+.note-btn:active{opacity:1;transform:scale(.9)}
+.note-btn.has-note{opacity:1;background:var(--gold-light)}
+
+/* ── NOTITIE MODAL (gecentreerd) ── */
+.modal-bg{position:fixed;inset:0;background:rgba(45,36,32,.55);z-index:400;
+  opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(3px)}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.95);
+  width:min(92vw,400px);background:var(--surface);border-radius:20px;
+  padding:22px 20px 18px;z-index:401;
+  box-shadow:0 20px 60px rgba(45,36,32,.28);
+  transition:transform .25s cubic-bezier(.34,1.2,.64,1),opacity .22s;
+  opacity:0;pointer-events:none;visibility:hidden}
+.modal.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all;visibility:visible}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:10px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);line-height:1.3}
+.modal-close{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:none;
+  background:var(--bg);color:var(--ink-soft);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:active{background:var(--border)}
+textarea.modal-note{width:100%;padding:11px 13px;font-family:'Inter',sans-serif;font-size:.88rem;
   color:var(--ink);background:var(--gold-pale);border:1.5px solid var(--gold-light);
-  border-radius:10px;resize:none;min-height:100px;line-height:1.6;transition:border-color .2s}
-textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
-.sheet-save{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;
+  border-radius:10px;resize:none;min-height:90px;line-height:1.6;transition:border-color .2s}
+textarea.modal-note:focus{outline:none;border-color:var(--gold)}
+.modal-save{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;
   background:var(--ink);color:#f5ede0;font-family:'Inter',sans-serif;font-weight:700;
   font-size:.88rem;cursor:pointer}
-.sheet-save:active{opacity:.8}
+.modal-save:active{opacity:.8}
 
 /* ── CONFETTI ── */
 .cf{position:fixed;pointer-events:none;z-index:9999;animation:cffall 1.1s ease-out forwards;border-radius:2px}
@@ -660,12 +677,14 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
   <a class="nb nb-logout" href="index.php?logout=1" title="Uitloggen"><span class="ni">🔒</span>Uit</a>
 </nav>
 
-<div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
-<div class="sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-title" id="sheetTitle">Notitie</div>
-  <textarea class="sheet-note" id="sheetNote" placeholder="Voeg een notitie toe…"></textarea>
-  <button class="sheet-save" onclick="saveSheetNote()">Opslaan</button>
+<div class="modal-bg" id="modalBg" onclick="closeSheet()"></div>
+<div class="modal" id="modal">
+  <div class="modal-header">
+    <div class="modal-title" id="sheetTitle">Notitie</div>
+    <button class="modal-close" onclick="closeSheet()">✕</button>
+  </div>
+  <textarea class="modal-note" id="sheetNote" placeholder="Voeg een notitie toe…"></textarea>
+  <button class="modal-save" onclick="saveSheetNote()">Opslaan</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -819,8 +838,8 @@ function renderPhase(){
     }
 
     const hasNote=!!(item.note&&item.note.trim());
-    const tapAttr=queued?'':`onclick="tapCard(event,'${item.id}')"`;
     const chkClick=queued?'event.stopPropagation()':`toggleDone(event,'${item.id}')`;
+    const noteBtn=!queued?`<button class="note-btn${hasNote?' has-note':''}" onclick="event.stopPropagation();openSheet('${item.id}')" title="Notitie">✏️</button>`:'';
 
     const isSpotlight=!done&&!queued&&item.id===spotlightId;
     const delay=idx*48;
@@ -828,7 +847,7 @@ function renderPhase(){
       <div class="tl-dot"></div>
       <div class="swipe-wrap">
         ${!done&&!queued?`<div class="swipe-bg swipe-bg-r">✓</div><div class="swipe-bg swipe-bg-l">✏️</div>`:''}
-        <div class="tl-card" ${tapAttr}>
+        <div class="tl-card" style="position:relative">
           <div class="tl-row">
             <button class="chk ${done?'on':''}" onclick="${chkClick}" ${queued?'disabled':''}>
               <span class="chk-icon">✓</span>
@@ -845,6 +864,7 @@ function renderPhase(){
             </div>
             ${rightSlot}
           </div>
+          ${noteBtn}
         </div>
       </div>
     </div>`;
@@ -918,8 +938,6 @@ document.addEventListener('touchend',()=>{
 })();
 
 /* ── INTERACTIONS ── */
-function tapCard(e,id){openSheet(id);}
-
 async function toggleDone(e,id){
   e.stopPropagation();
   const item=D.items.find(i=>i.id===id);
@@ -943,19 +961,19 @@ async function toggleCorsage(id){
   await api('toggle_corsage',{id,done:c.is_done});
 }
 
-/* ── SHEET ── */
+/* ── MODAL ── */
 function openSheet(id){
   const item=D.items.find(i=>i.id===id);if(!item)return;
   sheetItemId=id;
   document.getElementById('sheetTitle').textContent=item.what.substring(0,50);
   document.getElementById('sheetNote').value=item.note||'';
-  document.getElementById('sheetBg').classList.add('open');
-  document.getElementById('sheet').classList.add('open');
-  setTimeout(()=>document.getElementById('sheetNote').focus(),300);
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('sheetNote').focus(),250);
 }
 function closeSheet(){
-  document.getElementById('sheetBg').classList.remove('open');
-  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('modalBg').classList.remove('open');
+  document.getElementById('modal').classList.remove('open');
 }
 async function saveSheetNote(){
   const note=document.getElementById('sheetNote').value;

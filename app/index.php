@@ -117,8 +117,6 @@ $initData = json_encode([
   --sh:0 2px 16px rgba(45,36,32,.09);
   --r:14px;
   --nav-h:64px;
-  --header-h:128px; /* tall state */
-  --header-compact:58px;
   --strip-h:50px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -127,8 +125,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 /* ═══════════════════════════════════════════════
    HERO HEADER — glassmorphism + shrink on scroll
    ═══════════════════════════════════════════════ */
+.sticky-head{position:sticky;top:0;z-index:200}
 .hero{
-  position:sticky;top:0;z-index:200;
   will-change:transform;
   /* Tall state */
   background:linear-gradient(160deg,#1e1510 0%,#3a2414 55%,#2a1c12 100%);
@@ -288,10 +286,7 @@ body>*:not(#ambientOrb){position:relative;z-index:1}
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--border);
   -webkit-overflow-scrolling:touch;scrollbar-width:none;
-  position:sticky;top:var(--header-h);z-index:199;
-  transition:top .35s cubic-bezier(.4,0,.2,1);
 }
-.phase-strip.compact-offset{top:var(--header-compact)}
 .phase-strip::-webkit-scrollbar{display:none}
 .phase-pill{
   flex-shrink:0;display:flex;align-items:center;gap:5px;
@@ -305,8 +300,8 @@ body>*:not(#ambientOrb){position:relative;z-index:1}
 .phase-pill.has-alert .pc{background:var(--rose-light);color:var(--rose)}
 
 /* ── CONTENT ── */
-.content{padding:16px 16px 110px}
-.static-view{display:none;padding:16px 16px 110px}
+.content{padding:16px 16px max(120px, calc(var(--nav-h) + 56px))}
+.static-view{display:none;padding:16px 16px max(120px, calc(var(--nav-h) + 56px))}
 
 /* ═════════════════════════════════
    FASE-KLEUREN (theming per fase)
@@ -601,7 +596,8 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
 <body>
 <div id="ambientOrb"></div>
 
-<!-- ══ HERO HEADER ══ -->
+<!-- ══ HERO HEADER + PHASE STRIP (single sticky unit) ══ -->
+<div class="sticky-head" id="stickyHead">
 <header class="hero" id="hero">
   <div class="hero-inner">
     <div class="hero-top">
@@ -623,6 +619,7 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
 </header>
 
 <div class="phase-strip" id="phaseStrip"></div>
+</div><!-- /sticky-head -->
 
 <!-- DRAAIBOEK -->
 <div class="content" id="viewDraaiboek">
@@ -907,31 +904,15 @@ document.addEventListener('touchend',()=>{
   _dx=0;
 });
 
-/* ── GLASSMORPHISM HEADER SHRINK + DYNAMISCHE HOOGTE ── */
+/* ── GLASSMORPHISM HEADER SHRINK ── */
 (function(){
   const hero=document.getElementById('hero');
-  const strip=document.getElementById('phaseStrip');
   let compact=false;
-
-  function updateHeaderH(){
-    const h=hero.offsetHeight;
-    if(compact){
-      document.documentElement.style.setProperty('--header-compact',h+'px');
-    }else{
-      document.documentElement.style.setProperty('--header-h',h+'px');
-    }
-  }
-  // Meten zodra de hero van grootte verandert (ook na ticker-update)
-  updateHeaderH();
-  new ResizeObserver(updateHeaderH).observe(hero);
-  window.addEventListener('resize',updateHeaderH,{passive:true});
-
   window.addEventListener('scroll',()=>{
     const shouldCompact=window.scrollY>60;
     if(shouldCompact!==compact){
       compact=shouldCompact;
       hero.classList.toggle('compact',compact);
-      strip.classList.toggle('compact-offset',compact);
     }
   },{passive:true});
 })();

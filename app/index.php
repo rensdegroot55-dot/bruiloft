@@ -792,7 +792,7 @@ function renderPhase(){
   for(const p of D.phases){
     for(const it of D.items.filter(i=>i.phase_id===p.id)){
       if(+it.is_done||!it.time_start)continue;
-      const ms=toMs(it.time_start,p.date);
+      const ms=toMs(it.time_start,it.date??p.date);
       if(ms>now){nextItem=it;nextMs=ms;break;}
     }
     if(nextItem)break;
@@ -813,7 +813,7 @@ function renderPhase(){
   const cards=items.map((item,idx)=>{
     const done=+item.is_done;
     const queued=!done&&!active.has(item.id);
-    const ms=item.time_start?toMs(item.time_start,ph.date):null;
+    const ms=item.time_start?toMs(item.time_start,item.date??ph.date):null;
     const timeLbl=item.time_start?(item.time_end?`${item.time_start}–${item.time_end}`:item.time_start):'';
     let cls='',rightSlot='';
 
@@ -1183,14 +1183,13 @@ function tick(){
   const n=new Date();
   document.getElementById('liveClock').textContent=
     String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
-  if(activeView==='draaiboek'){renderPhase();updateProgress();}
 }
 
 /* ── INIT ── */
 activePhaseIdx=Math.max(0,D.phases.findIndex(p=>p.id==='vrijdag'));
 applyPhaseTheme(D.phases[activePhaseIdx]?.id);
-renderStrip();renderPhase();updateProgress();tick();
-ambientTick();tickerTick();
+renderStrip();renderPhase();updateProgress();
+tick();ambientTick();tickerTick();
 setInterval(tick,30000);
 setInterval(tickerTick,1000);
 setInterval(ambientTick,60000);

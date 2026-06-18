@@ -221,8 +221,67 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
 .hero.compact #liveClock{font-size:1.4rem}
 .hero.compact .clock-sub{opacity:0}
 .hero.compact .hero-progress{max-height:0;opacity:0;padding-bottom:0}
+.hero.compact .ticker{max-height:0;opacity:0;padding-bottom:0}
 
-/* ── PHASE STRIP (sticky below header) ── */
+/* ── AMBIENT ACHTERGROND ── */
+#ambientOrb{
+  position:fixed;top:-25vh;right:-25vw;
+  width:90vmax;height:90vmax;border-radius:50%;
+  pointer-events:none;z-index:0;opacity:.13;
+  will-change:background;
+  transition:background 90s linear;
+}
+body>*:not(#ambientOrb){position:relative;z-index:1}
+
+/* ── LIVE TICKER ── */
+.ticker{
+  padding:0 16px 9px;
+  max-height:38px;opacity:1;
+  overflow:hidden;
+  transition:max-height .35s,opacity .35s,padding .35s;
+}
+.ticker-inner{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.08);
+  border-radius:20px;padding:5px 13px 5px 10px;
+}
+.ticker-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);flex-shrink:0;
+  transition:background .4s;
+}
+.ticker-dot.urgent{background:var(--rose);animation:blink 1s infinite}
+.ticker-what{
+  flex:1;min-width:0;font-size:.68rem;
+  color:rgba(245,237,224,.72);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ticker-cd{
+  font-size:.76rem;font-weight:700;
+  font-variant-numeric:tabular-nums;
+  color:var(--gold);flex-shrink:0;white-space:nowrap;
+  transition:color .4s;
+}
+.ticker-cd.urgent{color:var(--rose)}
+
+/* ── SWIPE-TO-COMPLETE ── */
+.swipe-wrap{position:relative;overflow:hidden;border-radius:var(--r)}
+.swipe-bg{
+  position:absolute;inset:0;
+  display:flex;align-items:center;
+  font-size:1.3rem;opacity:0;
+  pointer-events:none;
+}
+.swipe-bg-r{
+  justify-content:flex-start;padding-left:18px;
+  background:linear-gradient(90deg,var(--sage) 0%,rgba(122,158,126,0) 80%);
+}
+.swipe-bg-l{
+  justify-content:flex-end;padding-right:18px;
+  background:linear-gradient(270deg,var(--gold) 0%,rgba(201,169,110,0) 80%);
+}
+.tl-card{position:relative;z-index:1}
+
 .phase-strip{
   display:flex;overflow-x:auto;gap:6px;padding:9px 14px;
   background:rgba(255,252,249,.95);
@@ -539,6 +598,7 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
 </style>
 </head>
 <body>
+<div id="ambientOrb"></div>
 
 <!-- ══ HERO HEADER ══ -->
 <header class="hero" id="hero">
@@ -558,6 +618,7 @@ textarea.sheet-note:focus{outline:none;border-color:var(--gold)}
     <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     <div class="prog-label" id="progLabel">0 / 0</div>
   </div>
+  <div class="ticker" id="ticker"></div>
 </header>
 
 <div class="phase-strip" id="phaseStrip"></div>
@@ -767,22 +828,25 @@ function renderPhase(){
     const delay=idx*48;
     return`<div class="tl-item entering${cls?' '+cls:''}${queued?' queued':''}${isSpotlight?' spotlight':''}" id="card-${item.id}" style="animation-delay:${delay}ms">
       <div class="tl-dot"></div>
-      <div class="tl-card" ${tapAttr}>
-        <div class="tl-row">
-          <button class="chk ${done?'on':''}" onclick="${chkClick}" ${queued?'disabled':''}>
-            <span class="chk-icon">✓</span>
-          </button>
-          <div class="item-body">
-            ${timeLbl||+item.is_secret?`<div class="item-time-row">
-              ${timeLbl?`<span class="itime">${timeLbl}</span>`:''}
-              ${+item.is_secret?`<span class="badge-s">🎺 Verrassing</span>`:''}
-            </div>`:''}
-            <div class="iwhat">${esc(item.what)}</div>
-            <div class="iwho">${esc(item.who)}</div>
-            ${item.location?`<div class="iloc">📍 ${esc(item.location)}</div>`:''}
-            ${hasNote?`<div style="font-size:.65rem;color:var(--gold);margin-top:3px">📝 ${esc(item.note.split('\n')[0]).substring(0,50)}</div>`:''}
+      <div class="swipe-wrap">
+        ${!done&&!queued?`<div class="swipe-bg swipe-bg-r">✓</div><div class="swipe-bg swipe-bg-l">✏️</div>`:''}
+        <div class="tl-card" ${tapAttr}>
+          <div class="tl-row">
+            <button class="chk ${done?'on':''}" onclick="${chkClick}" ${queued?'disabled':''}>
+              <span class="chk-icon">✓</span>
+            </button>
+            <div class="item-body">
+              ${timeLbl||+item.is_secret?`<div class="item-time-row">
+                ${timeLbl?`<span class="itime">${timeLbl}</span>`:''}
+                ${+item.is_secret?`<span class="badge-s">🎺 Verrassing</span>`:''}
+              </div>`:''}
+              <div class="iwhat">${esc(item.what)}</div>
+              <div class="iwho">${esc(item.who)}</div>
+              ${item.location?`<div class="iloc">📍 ${esc(item.location)}</div>`:''}
+              ${hasNote?`<div style="font-size:.65rem;color:var(--gold);margin-top:3px">📝 ${esc(item.note.split('\n')[0]).substring(0,50)}</div>`:''}
+            </div>
+            ${rightSlot}
           </div>
-          ${rightSlot}
         </div>
       </div>
     </div>`;
@@ -833,8 +897,9 @@ document.addEventListener('touchmove',e=>{
   const dy=e.touches[0].clientY-_sy;
   if(Math.abs(dy)>Math.abs(_dx)+10)_dragging=false;
 },{passive:true});
+let _cardSwiping=false;
 document.addEventListener('touchend',()=>{
-  if(!_dragging){_dx=0;return;}
+  if(!_dragging||_cardSwiping){_dx=0;_dragging=false;return;}
   _dragging=false;
   if(_dx<-60&&activePhaseIdx<D.phases.length-1)goPhase(activePhaseIdx+1);
   else if(_dx>60&&activePhaseIdx>0)goPhase(activePhaseIdx-1);
@@ -1003,6 +1068,125 @@ function showToast(msg){
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+/* ── SWIPE-TO-COMPLETE ── */
+{
+  let el=null,sid=null,sx=0,sy=0,dx=0,tracking=false;
+  const pc=document.getElementById('phaseContent');
+
+  pc.addEventListener('touchstart',e=>{
+    const wrap=e.target.closest('.swipe-wrap');
+    if(!wrap)return;
+    const item=wrap.closest('.tl-item');
+    if(!item||item.classList.contains('queued')||item.classList.contains('is-done'))return;
+    el=wrap;sid=item.id.replace('card-','');
+    sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;tracking=false;
+  },{passive:true});
+
+  pc.addEventListener('touchmove',e=>{
+    if(!el)return;
+    const cx=e.touches[0].clientX,cy=e.touches[0].clientY;
+    dx=cx-sx;
+    if(!tracking){
+      if(Math.abs(dx)<7&&Math.abs(cy-sy)<7)return;
+      if(Math.abs(cy-sy)>Math.abs(dx)){el=null;return;}
+      tracking=true;
+    }
+    _cardSwiping=true;
+    e.preventDefault();
+    const card=el.querySelector('.tl-card');
+    const capped=Math.sign(dx)*Math.min(Math.abs(dx),105);
+    if(card){card.style.transition='none';card.style.transform=`translateX(${capped}px)`;}
+    const br=el.querySelector('.swipe-bg-r');
+    const bl=el.querySelector('.swipe-bg-l');
+    if(br)br.style.opacity=dx>0?Math.min(dx/70,1):0;
+    if(bl)bl.style.opacity=dx<0?Math.min(-dx/70,1):0;
+  },{passive:false});
+
+  pc.addEventListener('touchend',async()=>{
+    if(!el||!tracking){el=null;_cardSwiping=false;tracking=false;return;}
+    const card=el.querySelector('.tl-card');
+    const br=el.querySelector('.swipe-bg-r');
+    const bl=el.querySelector('.swipe-bg-l');
+    const id=sid;
+    if(dx>60){
+      if(card){card.style.transition='transform .2s ease';card.style.transform='translateX(110%)';}
+      setTimeout(async()=>{
+        const fakeE={stopPropagation:()=>{},clientX:sx+50,clientY:sy};
+        await toggleDone(fakeE,id);
+      },180);
+    }else if(dx<-60){
+      if(card){card.style.transition='transform .18s ease';card.style.transform='translateX(-110%)';}
+      setTimeout(()=>openSheet(id),120);
+      setTimeout(()=>{
+        if(card){card.style.transition='transform .3s cubic-bezier(.34,1.56,.64,1)';card.style.transform='';}
+        if(br)br.style.opacity=0;if(bl)bl.style.opacity=0;
+      },380);
+    }else{
+      if(card){card.style.transition='transform .32s cubic-bezier(.34,1.56,.64,1)';card.style.transform='';}
+      if(br)br.style.opacity=0;if(bl)bl.style.opacity=0;
+    }
+    el=null;tracking=false;
+    setTimeout(()=>{_cardSwiping=false;},320);
+  },{passive:true});
+}
+
+/* ── AMBIENT DAG-KLEUREN ── */
+const AMBIENT_STOPS=[
+  {h:0, c:'#3a1860'},{h:6, c:'#f09050'},{h:8, c:'#f8c870'},
+  {h:12,c:'#ffe898'},{h:15,c:'#f4b880'},{h:17,c:'#e87050'},
+  {h:19,c:'#c06070'},{h:21,c:'#803898'},{h:23,c:'#3a1060'}
+];
+function lerpHex(a,b,t){
+  const h=s=>parseInt(s,16);
+  const r=Math.round(h(a.slice(1,3))+(h(b.slice(1,3))-h(a.slice(1,3)))*t);
+  const g=Math.round(h(a.slice(3,5))+(h(b.slice(3,5))-h(a.slice(3,5)))*t);
+  const bl=Math.round(h(a.slice(5,7))+(h(b.slice(5,7))-h(a.slice(5,7)))*t);
+  return`#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${bl.toString(16).padStart(2,'0')}`;
+}
+function ambientTick(){
+  const orb=document.getElementById('ambientOrb');if(!orb)return;
+  const now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
+  let prev=AMBIENT_STOPS[AMBIENT_STOPS.length-1],next=AMBIENT_STOPS[0];
+  for(let i=0;i<AMBIENT_STOPS.length-1;i++){
+    if(AMBIENT_STOPS[i].h*60<=nowMin&&AMBIENT_STOPS[i+1].h*60>nowMin){
+      prev=AMBIENT_STOPS[i];next=AMBIENT_STOPS[i+1];break;
+    }
+  }
+  const pm=prev.h*60,nm=next.h*60<=pm?next.h*60+1440:next.h*60;
+  const t=Math.max(0,Math.min(1,(nowMin-pm)/(nm-pm)));
+  const color=lerpHex(prev.c,next.c,t);
+  orb.style.background=`radial-gradient(circle,${color} 0%,transparent 70%)`;
+}
+
+/* ── LIVE TICKER ── */
+function tickerTick(){
+  const ticker=document.getElementById('ticker');
+  if(!ticker||activeView!=='draaiboek'){return;}
+  const now=Date.now();
+  let best=null,bestMs=Infinity;
+  for(const ph of D.phases){
+    for(const it of D.items.filter(i=>i.phase_id===ph.id)){
+      if(+it.is_done||!it.time_start)continue;
+      const ms=toMs(it.time_start,it.date??ph.date);
+      if(ms>now&&ms<bestMs){bestMs=ms;best=it;}
+    }
+  }
+  if(!best){ticker.innerHTML='';return;}
+  const diff=bestMs-now;
+  const urgent=diff<5*60*1000;
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  const cdStr=h>0
+    ?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    :`${m}:${String(s).padStart(2,'0')}`;
+  ticker.innerHTML=`<div class="ticker-inner">
+    <div class="ticker-dot${urgent?' urgent':''}"></div>
+    <div class="ticker-what">${esc(best.what)}</div>
+    <div class="ticker-cd${urgent?' urgent':''}">nog ${cdStr}</div>
+  </div>`;
+}
+
 /* ── CLOCK ── */
 function tick(){
   const n=new Date();
@@ -1015,7 +1199,11 @@ function tick(){
 activePhaseIdx=Math.max(0,D.phases.findIndex(p=>p.id==='vrijdag'));
 applyPhaseTheme(D.phases[activePhaseIdx]?.id);
 renderStrip();renderPhase();updateProgress();tick();
-setInterval(tick,30000);poll();
+ambientTick();tickerTick();
+setInterval(tick,30000);
+setInterval(tickerTick,1000);
+setInterval(ambientTick,60000);
+poll();
 </script>
 </body>
 </html>
